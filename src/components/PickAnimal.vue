@@ -25,8 +25,9 @@
         </div>
     </TransitionGroup>
     <section class="score">
-        <p v-if="endTime === 0"> 남은 매칭 수: {{ remainedMatchCount }} </p>
-        <p v-else> 걸린 시간: {{ elapsedTime }} </p>
+        <p v-if="endTime === 0"> 남은 쌍: {{ remainedMatchCount }}</p>
+        <p v-else> 걸린 시간: {{ elapsedTime }}</p>
+        <p>최고기록: {{ bestTime }}</p>
     </section>
     <section class="footer">
         <p class="battery">powered by <i class="fab fa-vuejs">3</i>,
@@ -75,6 +76,13 @@ const elapsedTime = computed(() => {
     return dayjs(endTime.value - startTime.value).format('mm분 ss초');
 });
 
+const bestTime = ref((() => {
+    const stored = localStorage.getItem('bestTime');
+    if(!stored)
+        return '없음';
+    return dayjs(Number(stored)).format('mm분 ss초');
+})())
+
 watch(() => remainedMatchCount.value, (count) => {
     if(count === 0) {
         confetti({
@@ -90,6 +98,19 @@ watch(() => remainedMatchCount.value, (count) => {
             origin: { x: 1, y: 0.8 },
         });
         endTime.value = dayjs().valueOf();
+
+        const current = endTime.value - startTime.value;
+
+        const stored = localStorage.getItem('bestTime');
+
+        if(!stored){
+            localStorage.setItem('bestTime', current.toString());
+            bestTime.value = dayjs(Number(current)).format('mm분 ss초');
+        } else {
+            const best = Math.min(Number(stored), Number(current))
+            localStorage.setItem('bestTime', best.toString());
+            bestTime.value = dayjs(best).format('mm분 ss초');
+        }
     }
 });
 
@@ -99,25 +120,30 @@ const onCardClick = (cardId: number) => {
     if(card === undefined || card.faceup)
         return;
 
+    if(selectedCards.value.length === 2)
+        return;
+    
     card.faceup = true;
 
     selectedCards.value.push(card);
 
-    if(selectedCards.value.length >= 2) {
+    if(selectedCards.value.length === 2) {
         const [first, second] = selectedCards.value;
         const firstCard = cards.value.find(card => card.id === first.id)!;
         const secondCard = cards.value.find(card => card.id === second.id)!;
+
         if(firstCard?.value === secondCard?.value) {
             matchedIds.value.add(firstCard?.id);
             matchedIds.value.add(secondCard?.id);
+            selectedCards.value = [];
         }
         else {
             setTimeout(() => {
                 firstCard.faceup = false;
                 secondCard.faceup = false;
+                selectedCards.value = [];
             }, 1000);
         }
-        selectedCards.value = [];
     }
 };
 
