@@ -2,6 +2,8 @@
 
 <kbd><img width="280" alt="image" src="https://github.com/user-attachments/assets/82ff4cef-cfe9-49a8-8679-38505bdc11ef" /></kbd>
 
+[https://pick-a-nimal.web.app/](https://pick-a-nimal.web.app/)
+
 ```sh
 npm run start
 ```
