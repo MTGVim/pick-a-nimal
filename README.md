@@ -5,7 +5,7 @@
 [https://pick-a-nimal.web.app/](https://pick-a-nimal.web.app/)
 
 ```sh
-npm run start
+npm install && npm run dev
 ```
 
 ## 스택
