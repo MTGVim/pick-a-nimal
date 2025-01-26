@@ -1,5 +1,5 @@
 <template>
-    <h1 class="title">Peek A-nimal</h1>
+    <h1 class="title">Pick A-nimal</h1>
     <section class="description">
         <p>카드 두 장을 선택해 뒤집으세요.<br/> 모든 쌍을 찾으세요! 💪
         </p>
