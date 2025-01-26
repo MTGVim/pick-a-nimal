@@ -1,7 +1,12 @@
 <template>
-    <h1 class="title">Peek A-nimal 🐯</h1>
+    <h1 class="title">Peek A-nimal 🐯
+        <p class="battery">powered by <i class="fab fa-vuejs">3</i>.</p>
+    </h1>
     <section class="description">
         <p>카드 두 장을 선택해 뒤집으세요.<br/> 모든 쌍을 찾으세요! 💪</p>
+    </section>
+    <section class="buttons">
+        <button class="gameStart" v-on:click="onRestart">{{ startLabel }}</button>
     </section>
     <TransitionGroup tag="section" class="board" name="shuffle-card">
         <div
@@ -21,17 +26,16 @@
         </div>
     </TransitionGroup>
     <section class="score">
-        <p> 남은 매칭 수: {{ (cards.length - matchedIds.size)/2 }} </p>
-    </section>
-    <section class="footer">
-        <button class="gameStart" v-on:click="onRestart">{{ startLabel }}</button>
-        <p class="battery">powered by <i class="fab fa-vuejs">3</i>.</p>
+        <p v-if="endTime === 0"> 남은 매칭 수: {{ remainedMatchCount }} </p>
+        <p v-else> 걸린 시간: {{ elapsedTime }} </p>
     </section>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
+import confetti from 'canvas-confetti';
+import dayjs from 'dayjs';
 import _ from 'lodash';
 
 const animals = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'] as const;
@@ -43,7 +47,7 @@ const cards = ref(
     .from({ length: animals.length }, (_, i) => i)
     .flatMap((i) => {
         return [
-            { id: i * 2, value: animals[i], faceup: false },
+            { id: i * 2, value: animals[i], faceup: true },
             { id: i * 2 + 1, value: animals[i], faceup: true },
         ];
     })
@@ -56,8 +60,36 @@ const startLabel = computed(() => {
     return started.value ? '다시 하기' : '시작 하기';
 });
 
-const onCardClick = (cardId: number) => {
+const remainedMatchCount = computed(() => {
+    return (cards.value.length - matchedIds.value.size)/2;
+});
 
+const startTime = ref(dayjs().valueOf());
+const endTime = ref(0);
+
+const elapsedTime = computed(() => {
+    return dayjs(endTime.value - startTime.value).format('mm분 ss초');
+});
+
+watch(() => remainedMatchCount.value, (count) => {
+    if(count === 0) {
+        confetti({
+            particleCount: 200,
+            colors: ['#42b883', '#35495e'],
+            spread: 70,
+            origin: { x: 0, y: 0.8 },
+        });
+        confetti({
+            particleCount: 200,
+            colors: ['#42b883', '#35495e'],
+            spread: 70,
+            origin: { x: 1, y: 0.8 },
+        });
+        endTime.value = dayjs().valueOf();
+    }
+});
+
+const onCardClick = (cardId: number) => {
     const card = cards.value.find(card => card.id === cardId);
     
     if(card === undefined || card.faceup)
@@ -93,6 +125,7 @@ const onRestart = () => {
         return card;
     });
     started.value = true;
+    endTime.value = 0;
 };
 
 </script>
@@ -184,7 +217,7 @@ const onRestart = () => {
     text-align: center;
 }
 
-.footer {
+.buttons {
     margin-top: 1rem;
     padding-bottom: 20px;
     text-align: center;

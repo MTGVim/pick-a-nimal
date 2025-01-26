@@ -10,7 +10,10 @@
   },
   "dependencies": {
     "@astrojs/vue": "^5.0.6",
+    "@types/canvas-confetti": "^1.9.0",
     "astro": "^5.1.9",
+    "canvas-confetti": "^1.9.3",
+    "dayjs": "^1.11.13",
     "lodash": "^4.17.14",
     "motion-v": "^0.8.1",
     "vue": "^3.5.13"
