@@ -12,6 +12,7 @@
     "@astrojs/vue": "^5.0.6",
     "astro": "^5.1.9",
     "lodash": "^4.17.14",
+    "motion-v": "^0.8.1",
     "vue": "^3.5.13"
   },
   "devDependencies": {

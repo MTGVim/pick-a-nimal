@@ -1,31 +1,32 @@
 <template>
-    <h1 class="title">Peek A-nimal 🃏</h1>
+    <h1 class="title">Peek A-nimal 🐯</h1>
     <section class="description">
         <p>카드 두 장을 선택해 뒤집으세요.<br/> 모든 쌍을 찾으세요! 💪</p>
-        <p class="battery">powered by <i class="fab fa-vuejs">3</i>.</p>
     </section>
-    <section class="board">
+    <TransitionGroup tag="section" class="board" name="shuffle-card">
         <div
             class='card'
-            v-bind:class="{
-                faceup: item.faceup,
-                facedown: !item.faceup,
-                matched: matchedIds.has(item.id)
-            }"
             v-for="item in cards"
             :key="item.id"
             v-on:click="onCardClick(item.id)"
+            v-bind:class="{
+                faceup: item.faceup,
+                facedown: !item.faceup,
+            }"
         >
-            {{ item.faceup ? item.value : item.id }}
+            <div class="back"></div>
+            <div class="front">
+                {{ item.value }}
+            </div>
         </div>
-    </section>
+    </TransitionGroup>
     <section class="score">
         <p> 남은 매칭 수: {{ (cards.length - matchedIds.size)/2 }} </p>
     </section>
     <section class="footer">
         <button class="gameStart" v-on:click="onRestart">{{ startLabel }}</button>
+        <p class="battery">powered by <i class="fab fa-vuejs">3</i>.</p>
     </section>
-    {{ matchedIds }}
 </template>
 
 <script setup lang="ts">
@@ -59,7 +60,7 @@ const onCardClick = (cardId: number) => {
 
     const card = cards.value.find(card => card.id === cardId);
     
-    if(card === undefined)
+    if(card === undefined || card.faceup)
         return;
 
     card.faceup = true;
@@ -75,8 +76,10 @@ const onCardClick = (cardId: number) => {
             matchedIds.value.add(secondCard?.id);
         }
         else {
-            firstCard.faceup = false;
-            secondCard.faceup = false;
+            setTimeout(() => {
+                firstCard.faceup = false;
+                secondCard.faceup = false;
+            }, 1000);
         }
         selectedCards.value = [];
     }
@@ -99,6 +102,7 @@ const onRestart = () => {
     font-size: 2rem;
     margin-bottom: 1rem;
     text-align: center;
+    color:#34495E;
 }
 
 .description {
@@ -116,34 +120,63 @@ const onRestart = () => {
 }
 
 .card {
-    align-items: center;
     aspect-ratio: 1 / 1.3;
-    border: solid 1px gray;
+    font-size: 3rem;
+    max-height:180px;
+    position: relative;
+}
+
+.card .front {
+    align-items: center;
+    backface-visibility: hidden;
+    background-color: antiquewhite;
     border-radius: 8px;
     display: flex;
-    font-size: 3rem;
+    height: 100%;
     justify-content: center;
+    position: absolute;
+    transition: all 0.5s ease-out;
+    width: 100%;
 }
 
-.card.facedown {
-    background-color:burlywood;
+.card.facedown .front {
+    transform: rotateY(180deg) scale(0.7);
 }
 
-.card.faceup {
-    background-color: beige;
+.card.faceup .front {
+    transform: rotateY(0deg) scale(1);
 }
 
-.card.matched {
-    background-color: #2ECC71;
+.card .back {
+    align-items: center;
+    backface-visibility: hidden;
+    background-color:steelblue;
+    border-radius: 8px;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    position: absolute;
+    transition: all 0.5s ease-out;
+    width: 100%;
 }
+
+.card.facedown .back {
+    transform: rotateY(0deg) scale(1);
+}
+
+.card.faceup .back {
+    transform: rotateY(180deg) scale(0.7);
+}
+
 
 .board {
-    align-items: center;
     display: grid;
-    gap: 8px;
-    grid-template-columns: 20% 20% 20% 20%;
+    gap: 12px;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     justify-content: center;
-    padding: 0 10%;
+    margin: 0 auto;
+    max-width: 400px;
+    padding: 0 24px;
 }
 
 .score {
@@ -153,6 +186,7 @@ const onRestart = () => {
 
 .footer {
     margin-top: 1rem;
+    padding-bottom: 20px;
     text-align: center;
 }
 
@@ -162,6 +196,11 @@ const onRestart = () => {
     border: none;
     color: white;
     cursor: pointer;
+    font-size: large;
     padding: 0.5rem 1rem;
+}
+
+.shuffle-card-move {
+    transition: transform 0.4s ease-in;
 }
 </style>
