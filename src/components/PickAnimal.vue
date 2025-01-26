@@ -23,11 +23,11 @@
         <p v-else> 걸린 시간: {{ elapsedTime }} | 뒤집기 {{ flipCount }}회</p>
         <b>👑 최고 기록 👑</b><br />
         {{ bestTime }} | 뒤집기 {{ bestFlipCount }}회
-        <i @click="copyGameBragMessageAsync" v-bind:class="{
+        <i v-if="bestFlipCount > 0" @click="copyGameBragMessageAsync" v-bind:class="{
             'fas fa-share-square': !brogCopyStatus || brogCopyStatus === 'success',
             'fas fa-times': brogCopyStatus === 'error',
         }"></i><br/>
-        <span v-if="brogCopyStatus === 'success'">복사 완료! <i class="fas fa-check"></i></span>
+        <span v-if="brogCopyStatus === 'success'">클립보드에 복사 완료! <i class="fas fa-check"></i></span>
     </section>
     <section class="footer">
         <p class="battery">
