@@ -26,13 +26,15 @@
     </TransitionGroup>
     <section class="score">
         <p v-if="endTime === 0"> 남은 쌍: {{ remainedMatchCount }}</p>
-        <p v-else> 걸린 시간: {{ elapsedTime }}</p>
+        <p v-else> 걸린 시간: {{ elapsedTime }} | 뒤집기 {{ flipCount }}회</p>
         <b>👑 최고 기록 👑</b> <br/>
-        {{ bestTime }} |     뒤집기 {{ bestFlipCount }}회
+        {{ bestTime }} | 뒤집기 {{ bestFlipCount }}회
     </section>
     <section class="footer">
-        <p class="battery">powered by <i class="fab fa-vuejs">3</i>,
-            <a href="https://tigeryoo-portfolio.web.app/">🐯</a>
+        <p class="battery">
+            Powered by <i class="fab fa-vuejs">3</i> <br/>
+            <a href="https://tigeryoo-portfolio.web.app/">🧑‍💻</a> | 
+            <a href="https://github.com/MTGVim/find-a-nimal"><i class="fab fa-github"></i></a>
         </p>
     </section>
 </template>
@@ -298,8 +300,8 @@ const onRestart = () => {
 }
 
 .footer {
-    margin-top: 1rem;
-    text-align: center;
+    text-align: right;
+    padding-right: 8px;
 }
 
 </style>
