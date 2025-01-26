@@ -1,43 +1,3 @@
-<template>
-    <h1 class="title">Pick A-nimal</h1>
-    <section class="description">
-        <p>카드 두 장을 선택해 뒤집으세요.<br /> 모든 쌍을 찾으세요! 💪
-        </p>
-    </section>
-    <section class="buttons">
-        <button class="gameStart" v-on:click="onRestart">{{ startLabel }}</button>
-    </section>
-    <TransitionGroup tag="section" class="board" name="shuffle-card">
-        <div class='card' v-for="item in cards" :key="item.id" v-on:click="onCardClick(item.id)" v-bind:class="{
-            faceup: item.faceup,
-            facedown: !item.faceup,
-        }">
-            <div class="back"></div>
-            <div class="front">
-                {{ item.value }}
-            </div>
-        </div>
-    </TransitionGroup>
-    <section class="score">
-        <p v-if="endTime === 0"> 남은 쌍: {{ remainedMatchCount }}</p>
-        <p v-else> 걸린 시간: {{ elapsedTime }} | 뒤집기 {{ flipCount }}회</p>
-        <b>👑 최고 기록 👑</b><br />
-        {{ bestTime }} | 뒤집기 {{ bestFlipCount }}회
-        <i v-if="bestFlipCount > 0" @click="copyGameBragMessageAsync" v-bind:class="{
-            'fas fa-share-square': !brogCopyStatus || brogCopyStatus === 'success',
-            'fas fa-times': brogCopyStatus === 'error',
-        }"></i><br />
-        <span v-if="brogCopyStatus === 'success'">클립보드에 복사 완료! <i class="fas fa-check"></i></span>
-    </section>
-    <section class="footer">
-        <p class="battery">
-            Powered by <i class="fab fa-vuejs">3</i> <br />
-            <a href="https://tigeryoo-portfolio.web.app/">🧑‍💻</a> |
-            <a href="https://github.com/MTGVim/find-a-nimal"><i class="fab fa-github"></i></a>
-        </p>
-    </section>
-</template>
-
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 
@@ -225,6 +185,45 @@ const onRestart = () => {
 };
 
 </script>
+
+<template>
+    <h1 class="title">Pick A-nimal</h1>
+    <section class="description">
+        <p>카드 두 장을 선택해 뒤집으세요.<br /> 모든 쌍을 찾으세요! 💪 </p>
+    </section>
+    <section class="buttons">
+        <button class="gameStart" v-on:click="onRestart">{{ startLabel }}</button>
+    </section>
+    <TransitionGroup tag="section" class="board" name="shuffle-card">
+        <div class='card' v-for="item in cards" :key="item.id" v-on:click="onCardClick(item.id)" v-bind:class="{
+            faceup: item.faceup,
+            facedown: !item.faceup,
+        }">
+            <div class="back"></div>
+            <div class="front">
+                {{ item.value }}
+            </div>
+        </div>
+    </TransitionGroup>
+    <section class="score">
+        <p v-if="endTime === 0"> 남은 쌍: {{ remainedMatchCount }}</p>
+        <p v-else> 걸린 시간: {{ elapsedTime }} | 뒤집기 {{ flipCount }}회</p>
+        <b>👑 최고 기록 👑</b><br />
+        {{ bestTime }} | 뒤집기 {{ bestFlipCount }}회
+        <i v-if="bestFlipCount > 0" @click="copyGameBragMessageAsync" v-bind:class="{
+            'fas fa-share-square': !brogCopyStatus || brogCopyStatus === 'success',
+            'fas fa-times': brogCopyStatus === 'error',
+        }"></i><br />
+        <span v-if="brogCopyStatus === 'success'">클립보드에 복사 완료! <i class="fas fa-check"></i></span>
+    </section>
+    <section class="footer">
+        <p class="battery">
+            Powered by <i class="fab fa-vuejs">3</i> <br />
+            <a href="https://tigeryoo-portfolio.web.app/">🧑‍💻</a> |
+            <a href="https://github.com/MTGVim/find-a-nimal"><i class="fab fa-github"></i></a>
+        </p>
+    </section>
+</template>
 
 <style scoped>
 *:not(i) {
