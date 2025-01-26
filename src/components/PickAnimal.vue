@@ -73,6 +73,7 @@ const remainedMatchCount = computed(() => {
 
 const startTime = ref(dayjs().valueOf());
 const endTime = ref(0);
+const flipCount = ref(0);
 
 const elapsedTime = computed(() => {
     return dayjs(endTime.value - startTime.value).format('mm분 ss초');
@@ -91,8 +92,6 @@ const bestFlipCount = ref((() => {
         return 0;
     return Number(stored);
 })());
-
-const flipCount = ref(0);
 
 const brogCopyStatus = ref<null | 'success' | 'error'>(null);
 
@@ -220,6 +219,8 @@ const onRestart = () => {
         return card;
     });
     started.value = true;
+    startTime.value = dayjs().valueOf();
+    flipCount.value = 0;
     endTime.value = 0;
 };
 
