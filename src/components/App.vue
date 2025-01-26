@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue';
 
 import { supabase } from '../lib/supabase';
+import PickAnimal from './PickAnimal.vue';
 
 const loading = ref(false)
 const email = ref('')
@@ -11,7 +12,6 @@ const session = ref(null);
 onMounted(() => {
     supabase.auth.getSession().then(({ data }) => {
         session.value = data.session
-        console.log(data);
     })
 
     supabase.auth.onAuthStateChange((_, _session) => {
@@ -57,10 +57,11 @@ const handleSignout = async () => {
             </div>
         </form>
         <div v-else class="row logged-in">
-            반가워요, {{ session.user.email }} 👋
+            👋 반가워요, {{ session.user.email }}
             <button class="button" @click="handleSignout" :disabled="loading">{{loading ? 'Loading...' : '로그아웃'}}</button>
         </div>
     </section>
+	<PickAnimal :session="session"/>
 </template>
 
 <style>
