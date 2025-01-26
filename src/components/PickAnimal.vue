@@ -218,7 +218,7 @@ const onRestart = () => {
     grid-template-columns: 1fr 1fr 1fr 1fr;
     justify-content: center;
     margin: 0 auto;
-    max-width: 400px;
+    max-width: 360px;
     padding: 0 24px;
 }
 
