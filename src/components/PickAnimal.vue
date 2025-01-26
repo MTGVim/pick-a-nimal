@@ -27,7 +27,8 @@
     <section class="score">
         <p v-if="endTime === 0"> 남은 쌍: {{ remainedMatchCount }}</p>
         <p v-else> 걸린 시간: {{ elapsedTime }}</p>
-        <p>최고기록: {{ bestTime }}</p>
+        <b>👑 최고 기록 👑</b> <br/>
+        {{ bestTime }} |     뒤집기 {{ bestFlipCount }}회
     </section>
     <section class="footer">
         <p class="battery">powered by <i class="fab fa-vuejs">3</i>,
@@ -83,6 +84,15 @@ const bestTime = ref((() => {
     return dayjs(Number(stored)).format('mm분 ss초');
 })())
 
+const bestFlipCount = ref((() => {
+    const stored = localStorage.getItem('bestFlipCount');
+    if(!stored)
+        return 0;
+    return Number(stored);
+})());
+
+const flipCount = ref(0);
+
 watch(() => remainedMatchCount.value, (count) => {
     if(count === 0) {
         confetti({
@@ -101,15 +111,26 @@ watch(() => remainedMatchCount.value, (count) => {
 
         const current = endTime.value - startTime.value;
 
-        const stored = localStorage.getItem('bestTime');
+        const storedBestTime = localStorage.getItem('bestTime');
 
-        if(!stored){
+        if(!storedBestTime){
             localStorage.setItem('bestTime', current.toString());
             bestTime.value = dayjs(Number(current)).format('mm분 ss초');
         } else {
-            const best = Math.min(Number(stored), Number(current))
+            const best = Math.min(Number(storedBestTime), Number(current))
             localStorage.setItem('bestTime', best.toString());
             bestTime.value = dayjs(best).format('mm분 ss초');
+        }
+
+        const storedBestFlipCount = localStorage.getItem('bestFlipCount');
+        
+        if(!storedBestFlipCount){
+            localStorage.setItem('bestFlipCount', flipCount.value.toString());
+            bestFlipCount.value = flipCount.value;
+        } else {
+            const best = Math.min(Number(storedBestFlipCount), flipCount.value)
+            localStorage.setItem('bestFlipCount', best.toString());
+            bestFlipCount.value = best;
         }
     }
 });
@@ -122,6 +143,8 @@ const onCardClick = (cardId: number) => {
 
     if(selectedCards.value.length === 2)
         return;
+
+    flipCount.value += 1;
     
     card.faceup = true;
 
@@ -251,6 +274,7 @@ const onRestart = () => {
 .score {
     margin-top: 1rem;
     text-align: center;
+    font-size: small;
 }
 
 .buttons {
