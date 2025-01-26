@@ -1,4 +1,4 @@
-# Find-A-nimal
+# Pick-A-nimal
 
 <kbd><img width="280" alt="image" src="https://github.com/user-attachments/assets/82ff4cef-cfe9-49a8-8679-38505bdc11ef" /></kbd>
 
