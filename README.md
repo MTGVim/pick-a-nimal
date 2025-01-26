@@ -31,7 +31,7 @@ npm install && npm run dev
   - [x] 클립보드
 - [ ] PWA (앱으로 설치) 지원 
 
-## 기여 / Contributing
+## 기여
 
 Pick-A-nimal에 기여하고 싶다면, GitHub 저장소를 포크하고 풀 리퀘스트를 제출해 주세요.
 
