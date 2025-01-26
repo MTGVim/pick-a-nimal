@@ -1,9 +1,8 @@
 <template>
-    <h1 class="title">Peek A-nimal 🐯
-        <p class="battery">powered by <i class="fab fa-vuejs">3</i>.</p>
-    </h1>
+    <h1 class="title">Peek A-nimal</h1>
     <section class="description">
-        <p>카드 두 장을 선택해 뒤집으세요.<br/> 모든 쌍을 찾으세요! 💪</p>
+        <p>카드 두 장을 선택해 뒤집으세요.<br/> 모든 쌍을 찾으세요! 💪
+        </p>
     </section>
     <section class="buttons">
         <button class="gameStart" v-on:click="onRestart">{{ startLabel }}</button>
@@ -28,6 +27,11 @@
     <section class="score">
         <p v-if="endTime === 0"> 남은 매칭 수: {{ remainedMatchCount }} </p>
         <p v-else> 걸린 시간: {{ elapsedTime }} </p>
+    </section>
+    <section class="footer">
+        <p class="battery">powered by <i class="fab fa-vuejs">3</i>,
+            <a href="https://tigeryoo-portfolio.web.app/">🐯</a>
+        </p>
     </section>
 </template>
 
@@ -131,6 +135,12 @@ const onRestart = () => {
 </script>
 
 <style scoped>
+*:not(i) {
+    font-family: "Noto Sans KR", serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
 .title {
     font-size: 2rem;
     margin-bottom: 1rem;
@@ -236,4 +246,10 @@ const onRestart = () => {
 .shuffle-card-move {
     transition: transform 0.4s ease-in;
 }
+
+.footer {
+    margin-top: 1rem;
+    text-align: center;
+}
+
 </style>
