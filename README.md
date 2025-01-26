@@ -11,6 +11,7 @@ npm install && npm run dev
 ## 스택
 - astro
 - vue.js 3
+- supabase (postgresql)
 
 ## 소개
 
