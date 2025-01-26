@@ -26,7 +26,7 @@
         <i v-if="bestFlipCount > 0" @click="copyGameBragMessageAsync" v-bind:class="{
             'fas fa-share-square': !brogCopyStatus || brogCopyStatus === 'success',
             'fas fa-times': brogCopyStatus === 'error',
-        }"></i><br/>
+        }"></i><br />
         <span v-if="brogCopyStatus === 'success'">클립보드에 복사 완료! <i class="fas fa-check"></i></span>
     </section>
     <section class="footer">
@@ -119,10 +119,10 @@ const copyGameBragMessageAsync = async () => {
         .replace('$BEST_TIME', bestTime.value)
         .replace('$BEST_FLIP_COUNT', bestFlipCount.value.toString())
         + '\n나도 도전하기: https://pick-a-nimal.web.app/';
-    
+
     try {
 
-    await navigator.clipboard.writeText(formattedMessage);
+        await navigator.clipboard.writeText(formattedMessage);
         brogCopyStatus.value = 'success';
     } catch (err: unknown) {
         brogCopyStatus.value = 'error';
@@ -351,10 +351,10 @@ const onRestart = () => {
 }
 
 .fa-check {
-    color:#4CAF50;
+    color: #4CAF50;
 }
 
 .fa-times {
-    color:#F44336;
+    color: #F44336;
 }
 </style>
