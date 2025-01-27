@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue';
 
 import dayjs from 'dayjs';
 
-import { supabase } from '../lib/supabase';
+import { supabase } from '../libs/supabase';
 import Button from './Button.vue';
 import Navigate from './Navigate.vue';
 

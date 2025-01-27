@@ -5,7 +5,7 @@ import confetti from 'canvas-confetti';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 
-import { supabase } from '../lib/supabase';
+import { supabase } from '../libs/supabase';
 
 const props = defineProps({
     flipCount: {

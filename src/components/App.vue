@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 
-import { supabase } from '../lib/supabase';
+import { supabase } from '../libs/supabase';
 import Button from './Button.vue';
 import PickAnimal from './PickAnimal.vue';
 
