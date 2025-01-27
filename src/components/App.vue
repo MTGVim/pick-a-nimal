@@ -13,13 +13,13 @@ const session = ref(null);
 onMounted(() => {
     supabase.auth.getSession().then(({ data }) => {
         session.value = data.session
-        if(data.session.user) {
-            handleUpdateUserName(data.session.user.email.split('@').at(0))
-        }
     })
 
-    supabase.auth.onAuthStateChange((_, _session) => {
-        session.value = _session
+    supabase.auth.onAuthStateChange((_, sessonValue) => {
+        session.value = sessonValue
+        if(sessonValue?.user?.email) {
+            handleUpdateUserName(sessonValue.user.email.split('@').at(0))
+        }
     })
 });
 
