@@ -76,8 +76,8 @@ const handleUpdateUserName = async (username) => {
         </form>
         <div v-else class="row logged-in">
             👋 반가워요, {{ session.user.email.split('@').at(0) }}!
-            <Button @click="handleUpdateUserName(session.user.email.split('@').at(0))" :disabled="loading">{{ loading ? 'Loading...' :
-                '이름 변경'}}</Button>
+            <!-- <Button @click="handleUpdateUserName(session.user.email.split('@').at(0))" :disabled="loading">{{ loading ? 'Loading...' :
+                '이름 변경'}}</Button> -->
             <Button @click="handleSignout" :disabled="loading">{{ loading ? 'Loading...' :
                 '로그아웃'}}</Button>
         </div>
