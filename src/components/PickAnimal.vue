@@ -114,7 +114,7 @@ const onRestart = () => {
         :session="session" :start-time="startTime" />
     <section class="footer">
         <p class="battery">
-            Powered by <i class="fab fa-vuejs">3</i> <br />
+            Powered by <i class="fab fa-vuejs">3</i> | 🧑‍🚀 <br />
             <a href="https://tigeryoo-portfolio.web.app/">🧑‍💻</a> |
             <a href="https://github.com/MTGVim/find-a-nimal"><i class="fab fa-github"></i></a>
         </p>
