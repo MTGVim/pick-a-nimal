@@ -108,7 +108,7 @@ const handleRefreshClick = () => {
     <section class="buttons row">
         <Navigate href="/">🔙 게임하러 가기</Navigate>
         <Button v-on:click="handleRefreshClick">🔄 새로고침</Button>
-        <Button v-on:click="handleTabClick('elpasedTime')">⏰ 클리어 시간 기준</Button>
+        <Button v-on:click="handleTabClick('elpasedTime')">⏰ 시간 기준</Button>
         <Button v-on:click="handleTabClick('flipCount')">🍳 뒤집은 횟수 기준</Button>
     </section>
     <section v-if="loading" class="column">
@@ -120,7 +120,7 @@ const handleRefreshClick = () => {
                 <tr>
                     <th>순위</th>
                     <th>유저명</th>
-                    <th>클리어 시간</th>
+                    <th>시간</th>
                     <th>일시</th>
                 </tr>
                 <tr v-for="[index, score] in bestElapsedTimeList.entries()" :key="score.id + score.createdAt">
@@ -137,7 +137,7 @@ const handleRefreshClick = () => {
                 <tr>
                     <th>순위</th>
                     <th>유저명</th>
-                    <th>뒤집기 횟수</th>
+                    <th>횟수</th>
                     <th>일시</th>
                 </tr>
                 <tr v-for="[index, score] in bestFlipCountList.entries()" :key="score.id + score.createdAt">
