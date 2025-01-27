@@ -66,7 +66,11 @@ const handleUpdateUserName = async (username) => {
 </script>
 
 <template>
-    <section class="container">
+    <section v-bind:class="{
+        'container': true,
+        'logged-in': session,
+        'not-logged-in': !session,
+    }">
         <form v-if="!session" class="column" @submit.prevent="handleSignin">
             <div class="guide">{{ message }}</div>
             <div class="row">
@@ -74,7 +78,7 @@ const handleUpdateUserName = async (username) => {
                 <input type="submit" class="button" :value="loading ? 'Loading...' : '링크 보내기'" :disabled="loading" />
             </div>
         </form>
-        <div v-else class="row logged-in">
+        <div v-else class="row">
             👋 반가워요, {{ session.user.email.split('@').at(0) }}!
             <!-- <Button @click="handleUpdateUserName(session.user.email.split('@').at(0))" :disabled="loading">{{ loading ? 'Loading...' :
                 '이름 변경'}}</Button> -->
@@ -96,6 +100,18 @@ const handleUpdateUserName = async (username) => {
     position: sticky;
     top: 0;
     padding: 0.5rem;
+    border-bottom: solid 1px lightgray;
+}
+
+.container.not-logged-in {
+    background-color:azure;
+}
+
+.container.not-logged-in .guide {
+    color:black;
+}
+
+.container.logged-in {
     background-color: whitesmoke;
 }
 
