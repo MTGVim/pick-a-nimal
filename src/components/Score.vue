@@ -241,6 +241,12 @@ watch(() => remainedMatchCount?.value, (count) => {
 </template>
 
 <style scoped>
+*:not(i) {
+    font-family: "Noto Sans KR", serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
 .score {
     margin-top: 1rem;
     text-align: center;

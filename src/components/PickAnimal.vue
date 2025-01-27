@@ -4,6 +4,7 @@ import { computed, ref } from 'vue';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 
+import Navigate from './Navigate.vue';
 import Score from './Score.vue';
 
 const { session } = defineProps(['session']);
@@ -91,6 +92,9 @@ const onRestart = () => {
     <h1 class="title">Pick A-nimal</h1>
     <section class="description">
         <p>카드 두 장을 선택해 뒤집으세요.<br /> 모든 쌍을 찾으세요! 💪 </p>
+    </section>
+    <section class="column">
+        <Navigate href="/leaderboard">🏆 리더보드</Navigate>
     </section>
     <section class="buttons">
         <button class="gameStart" v-on:click="onRestart">{{ startLabel }}</button>
@@ -214,7 +218,9 @@ const onRestart = () => {
 .buttons {
     margin-top: 1rem;
     padding-bottom: 20px;
-    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
 }
 
 .gameStart {
@@ -225,6 +231,14 @@ const onRestart = () => {
     cursor: pointer;
     font-size: large;
     padding: 0.5rem 1rem;
+}
+
+.gameStart:hover {
+    background: darkgreen;
+}
+
+.gameStart:active {
+    transform: scale(0.8);
 }
 
 .shuffle-card-move {

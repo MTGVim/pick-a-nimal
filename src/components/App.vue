@@ -4,9 +4,9 @@ import { onMounted, ref } from 'vue';
 import { supabase } from '../lib/supabase';
 import PickAnimal from './PickAnimal.vue';
 
-const loading = ref(false)
-const email = ref('')
-const message = ref('🔐 이메일로 링크를 보내 로그인 합니다.')
+const loading = ref(false);
+const email = ref('');
+const message = ref('🔐 이메일로 링크를 보내 로그인 합니다.');
 const session = ref(null);
 
 onMounted(() => {
@@ -17,7 +17,7 @@ onMounted(() => {
     supabase.auth.onAuthStateChange((_, _session) => {
         session.value = _session
     })
-})
+});
 
 const handleSignin = async () => {
     try {
@@ -34,7 +34,7 @@ const handleSignin = async () => {
     } finally {
         loading.value = false
     }
-}
+};
 
 const handleSignout = async () => {
     try {
@@ -43,7 +43,7 @@ const handleSignout = async () => {
     } catch (error) {
         console.error('Sign out error', error)
     }
-}
+};
 
 </script>
 
@@ -58,16 +58,22 @@ const handleSignout = async () => {
         </form>
         <div v-else class="row logged-in">
             👋 반가워요, {{ session.user.email }}
-            <button class="button" @click="handleSignout" :disabled="loading">{{loading ? 'Loading...' : '로그아웃'}}</button>
+            <button class="button" @click="handleSignout" :disabled="loading">{{ loading ? 'Loading...' :
+                '로그아웃'}}</button>
         </div>
     </section>
-	<PickAnimal :session="session"/>
+    <PickAnimal :session="session" />
 </template>
 
 <style>
+*:not(i) {
+    font-family: "Noto Sans KR", serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
 
 .container {
-    position:sticky;
+    position: sticky;
     top: 0;
     padding: 0.5rem;
     background-color: whitesmoke;
