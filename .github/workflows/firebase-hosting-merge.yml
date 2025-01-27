@@ -16,6 +16,8 @@ jobs:
           touch .env
           echo "PUBLIC_SUPABASE_URL='${{ secrets.PUBLIC_SUPABASE_URL }}'" >> .env
           echo "PUBLIC_SUPABASE_ANON_KEY='${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}'" >> .env
+      - name: Check .env file
+        run: cat .env
       - run: npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
