@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue';
 
 import { supabase } from '../lib/supabase';
+import Button from './Button.vue';
 import PickAnimal from './PickAnimal.vue';
 
 const loading = ref(false);
@@ -12,6 +13,9 @@ const session = ref(null);
 onMounted(() => {
     supabase.auth.getSession().then(({ data }) => {
         session.value = data.session
+        if(data.session.user) {
+            handleUpdateUserName(data.session.user.email.split('@').at(0))
+        }
     })
 
     supabase.auth.onAuthStateChange((_, _session) => {
@@ -45,6 +49,20 @@ const handleSignout = async () => {
     }
 };
 
+const handleUpdateUserName = async (username) => {
+    try {
+    const { error } = await supabase
+        .from('profiles')  // 'users' 테이블
+        .update({ username })  // 새로운 username
+        .eq('id', session.value.user.id);  // 현재 로그인한 사용자의 ID로 업데이트
+
+        if (error) throw error
+
+    } catch (error) {
+        console.error('Update user name error', error)
+    }
+};
+
 </script>
 
 <template>
@@ -57,9 +75,11 @@ const handleSignout = async () => {
             </div>
         </form>
         <div v-else class="row logged-in">
-            👋 반가워요, {{ session.user.email }}
-            <button class="button" @click="handleSignout" :disabled="loading">{{ loading ? 'Loading...' :
-                '로그아웃'}}</button>
+            👋 반가워요, {{ session.user.email.split('@').at(0) }}!
+            <Button @click="handleUpdateUserName(session.user.email.split('@').at(0))" :disabled="loading">{{ loading ? 'Loading...' :
+                '이름 변경'}}</Button>
+            <Button @click="handleSignout" :disabled="loading">{{ loading ? 'Loading...' :
+                '로그아웃'}}</Button>
         </div>
     </section>
     <PickAnimal :session="session" />

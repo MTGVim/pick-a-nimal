@@ -10,13 +10,13 @@ import Navigate from './Navigate.vue';
 const loading = ref(false);
 
 const bestFlipCountList = ref<{
-    username: string;
+    id: string;
     createdAt: string;
     flipCount: number;
 }[]>([]);
 
 const bestElapsedTimeList = ref<{
-    username: string;
+    id: string;
     createdAt: string;
     elapsedTime: number;
 }[]>([]);
@@ -39,9 +39,11 @@ async function getBestFlipCountList() {
 
         if (error && status !== 406) throw error
 
+        console.log(data)
+
         bestFlipCountList.value = data?.map(
             ({ profiles, flip_count, created_at }) => ({
-                username: (profiles as unknown as { username: string }).username,
+                id: (profiles as unknown as { username: string }).username || '-',
                 flipCount: flip_count,
                 createdAt: dayjs(created_at).format('YYYY-MM-DD HH:mm'),
             })
@@ -61,7 +63,7 @@ async function getBestElapsedTimeList() {
 
         const { data, error, status } = await supabase
             .from('best_times')
-            .select('elapsed_time, created_at, profiles(username)')
+            .select('elapsed_time, created_at, profiles( username )')
             .order('elapsed_time', { ascending: true })
             .limit(10)
 
@@ -69,7 +71,7 @@ async function getBestElapsedTimeList() {
 
         bestElapsedTimeList.value = data?.map(
             ({ profiles, elapsed_time, created_at }) => ({
-                username: (profiles as unknown as { username: string }).username,
+                id: (profiles as unknown as { username: string }).username || '-',
                 elapsedTime: elapsed_time,
                 createdAt: dayjs(created_at).format('YYYY-MM-DD HH:mm'),
             })
@@ -113,7 +115,7 @@ const handleRefreshClick = () => {
         <p>Loading...</p>
     </section>
     <section class="column table-container" v-else>
-        <table v-if="groupBy === 'elpasedTime'" >
+        <table v-if="groupBy === 'elpasedTime'">
             <tbody>
                 <tr>
                     <th>순위</th>
@@ -121,9 +123,9 @@ const handleRefreshClick = () => {
                     <th>클리어 시간</th>
                     <th>일시</th>
                 </tr>
-                <tr v-for="[index, score] in bestElapsedTimeList.entries()" :key="score.username + score.createdAt">
-                    <td>{{ `# ${index +1} ${index===0 ? '👑 🤫' : index === 1 ? '👏' : index === 2 ? '👍' : ''}` }}</td>
-                    <td>{{ score.username }}</td>
+                <tr v-for="[index, score] in bestElapsedTimeList.entries()" :key="score.id + score.createdAt">
+                    <td>{{ `# ${index + 1} ${index === 0 ? '👑 🤫' : index === 1 ? '👏' : index === 2 ? '👍' : ''}` }}</td>
+                    <td>{{ score.id }}</td>
                     <td>{{ score.elapsedTime === 0 ? '없음' : dayjs(score.elapsedTime).format('mm분 ss초') }}</td>
                     <td>{{ score.createdAt }}</td>
                 </tr>
@@ -138,9 +140,9 @@ const handleRefreshClick = () => {
                     <th>뒤집기 횟수</th>
                     <th>일시</th>
                 </tr>
-                <tr v-for="[index, score] in bestFlipCountList.entries()" :key="score.username + score.createdAt">
-                    <td>{{ `# ${index +1} ${index===0 ? '👑 🤫' : index ===1 ? '👏' : index === 2 ? '👍' : ''}` }}</td>
-                    <td>{{ score.username }}</td>
+                <tr v-for="[index, score] in bestFlipCountList.entries()" :key="score.id + score.createdAt">
+                    <td>{{ `# ${index + 1} ${index === 0 ? '👑 🤫' : index === 1 ? '👏' : index === 2 ? '👍' : ''}` }}</td>
+                    <td>{{ score.id }}</td>
                     <td>{{ score.flipCount }} 회</td>
                     <td>{{ score.createdAt }}</td>
                 </tr>
