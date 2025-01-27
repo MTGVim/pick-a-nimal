@@ -226,7 +226,7 @@ watch(() => remainedMatchCount?.value, (count) => {
 <template>
     <section class="score">
         <p v-if="clearElapsedTime === 0 "> 남은 쌍: {{ remainedMatchCount }}</p>
-        <p v-else> 걸린 시간: {{ clearElapsedTimeText }} | 뒤집기 {{ flipCount }}회</p>
+        <p v-else> 이번 기록: {{ clearElapsedTimeText }} | 뒤집기 {{ flipCount }}회</p>
         <div v-if="bestFlipCount > 0">
             <b>👑 최고 기록 👑</b><br />
             <span>{{ bestElapsedTimeText }} | 뒤집기 {{ bestFlipCount }}회 | 
