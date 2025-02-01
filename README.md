@@ -47,7 +47,7 @@ GitHub 저장소: https://github.com/MTGVim/pick-a-nimal
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="http://nara.dev"><img src="https://avatars.githubusercontent.com/u/16604401?v=4?s=100" width="100px;" alt="nara"/><br /><sub><b>nara</b></sub></a><br /><a href="#ideas-narashin" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://nara.dev"><img src="https://avatars.githubusercontent.com/u/16604401?v=4?s=100" width="100px;" alt="nara"/><br /><sub><b>nara</b></sub></a><br /><a href="#ideas-narashin" title="Ideas, Planning, & Feedback">🤔</a> <a href="#userTesting-narashin" title="User Testing">📓</a> <a href="#bug-narashin" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>
