@@ -47,7 +47,7 @@ GitHub 저장소: https://github.com/MTGVim/pick-a-nimal
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="http://nara.dev"><img src="https://avatars.githubusercontent.com/u/16604401?v=4?s=100" width="100px;" alt="nara"/><br /><sub><b>nara</b></sub></a><br /><a href="#ideas-narashin" title="Ideas, Planning, & Feedback">🤔</a> <a href="#userTesting-narashin" title="User Testing">📓</a> <a href="https://github.com/MTGVim/pick-a-nimal/issues?q=author%3Anarashin" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://nara.dev"><img src="https://avatars.githubusercontent.com/u/16604401?v=4?s=100" width="100px;" alt="nara"/><br /><sub><b>nara</b></sub></a><br /><a href="#ideas-narashin" title="Ideas, Planning, & Feedback">🤔</a> <a href="#userTesting-narashin" title="User Testing">📓</a> <a href="https://github.com/MTGVim/pick-a-nimal/issues?q=author%3Anarashin" title="Bug reports">🐛</a> <a href="#mentoring-narashin" title="Mentoring">🧑‍🏫</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://tigeryoo-portfolio.web.app/"><img src="https://avatars.githubusercontent.com/u/6271133?v=4?s=100" width="100px;" alt="TigerYoo"/><br /><sub><b>TigerYoo</b></sub></a><br /><a href="https://github.com/MTGVim/pick-a-nimal/commits?author=MTGVim" title="Code">💻</a> <a href="https://github.com/MTGVim/pick-a-nimal/commits?author=MTGVim" title="Documentation">📖</a> <a href="#design-MTGVim" title="Design">🎨</a></td>
     </tr>
   </tbody>
