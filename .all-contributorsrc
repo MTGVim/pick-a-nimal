@@ -31,6 +31,16 @@
         "design",
         "maintenance"
       ]
+    },
+    {
+      "login": "clarekang",
+      "name": "Clare Kang",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17075926?v=4",
+      "profile": "https://clarekang.me",
+      "contributions": [
+        "design",
+        "ideas"
+      ]
     }
   ],
   "repoType": "github"
