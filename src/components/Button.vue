@@ -32,4 +32,8 @@ button:hover {
 button:active {
     transform: scale(0.8);
 }
+
+button.outline {
+    border: none;
+}
 </style>
