@@ -105,11 +105,13 @@ const handleRefreshClick = () => {
     <section class="column">
         <p>🏆 최고 기록을 갱신한 유저들을 확인하세요!</p>
     </section>
-    <section class="column">
+    <section class="buttons row">
         <Navigate href="/">🔙 게임하러 가기</Navigate>
     </section>
     <section class="buttons row">
-        <Button v-on:click="handleRefreshClick">🔄 새로고침</Button>
+        <Button class="outline" v-on:click="handleRefreshClick">🔄 새로 고침</Button>
+    </section>
+    <section class="buttons row">
         <Button v-on:click="handleTabClick('elpasedTime')">⏰ 시간 기준</Button>
         <Button v-on:click="handleTabClick('flipCount')">🍳 뒤집은 횟수 기준</Button>
     </section>
