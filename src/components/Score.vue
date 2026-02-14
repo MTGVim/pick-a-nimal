@@ -48,6 +48,9 @@ const bestElapsedTimeText = computed(() =>(
     bestElapsedTime.value === 0 ? '없음' :
     dayjs(bestElapsedTime.value).format('mm분 ss초')
 ));
+const currentRoundFlipCount = computed(() => (
+    clearElapsedTime.value === 0 ? flipCount.value : clearFlipCount.value
+));
 
 watch(session, (sessionValue) => {
     if(sessionValue) {
@@ -225,8 +228,7 @@ watch(() => remainedMatchCount?.value, (count) => {
 
 <template>
     <section class="score">
-        <p v-if="clearElapsedTime === 0 "> 남은 쌍: {{ remainedMatchCount }}</p>
-        <p v-else> 이번 기록: {{ clearElapsedTimeText }} | 뒤집기 {{ flipCount }}회</p>
+        <p class="status">남은 쌍: {{ remainedMatchCount }} | 기록: {{ clearElapsedTimeText }} | 뒤집기 {{ currentRoundFlipCount }}회</p>
         <div v-if="bestFlipCount > 0">
             <b>👑 최고 기록 👑</b><br />
             <span>{{ bestElapsedTimeText }} | 뒤집기 {{ bestFlipCount }}회 | 
@@ -248,9 +250,16 @@ watch(() => remainedMatchCount?.value, (count) => {
 }
 
 .score {
-    margin-top: 1rem;
+    margin-top: 0.2rem;
+    margin-bottom: 1rem;
     text-align: center;
-    font-size: small;
+    font-size: 0.95rem;
+}
+
+.status {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0.1rem 0;
 }
 
 .fa-share-square {

@@ -5,8 +5,10 @@
 [https://pick-a-nimal.web.app/](https://pick-a-nimal.web.app/)
 
 ```sh
-npm install && npm run dev
+yarn install && yarn dev
 ```
+
+Node.js `20.19.0+`가 필요합니다 (`.nvmrc` 참고).
 
 ## 스택
 - astro

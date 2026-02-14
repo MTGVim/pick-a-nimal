@@ -37,12 +37,13 @@ const remainedMatchCount = computed(() => {
 
 const startTime = ref(dayjs().valueOf());
 const flipCount = ref(0);
+const previewing = ref(false);
 
 
 const onCardClick = (cardId: number) => {
     const card = cards.value.find(card => card.id === cardId);
 
-    if (card === undefined || card.faceup)
+    if (previewing.value || card === undefined || card.faceup)
         return;
 
     if (selectedCards.value.length === 2)
@@ -75,49 +76,66 @@ const onCardClick = (cardId: number) => {
 };
 
 const onRestart = () => {
+    if (previewing.value)
+        return;
+
     selectedCards.value = [];
     matchedIds.value = new Set<number>();
     cards.value = _.shuffle(cards.value).map((card) => {
-        card.faceup = false;
+        card.faceup = true;
         return card;
     });
     started.value = true;
-    startTime.value = dayjs().valueOf();
     flipCount.value = 0;
+    previewing.value = true;
+
+    setTimeout(() => {
+        cards.value = cards.value.map((card) => ({
+            ...card,
+            faceup: false,
+        }));
+        startTime.value = dayjs().valueOf();
+        previewing.value = false;
+    }, 3000);
 };
 
 </script>
 
 <template>
     <h1 class="title">Pick A-nimal</h1>
-    <section class="description">
-        <p>카드 두 장을 선택해 뒤집으세요.<br /> 모든 쌍을 찾으세요! 💪 </p>
-    </section>
-    <section class="column">
-        <Navigate href="/leaderboard">🏆 리더보드</Navigate>
-    </section>
     <section class="buttons">
-        <button class="gameStart" v-on:click="onRestart">{{ startLabel }}</button>
+        <Transition name="toast-fade" mode="out-in">
+            <div v-if="previewing" class="buttonToast">3초 뒤 뒤집힙니다. 외우세요!</div>
+            <button v-else class="gameStart" :disabled="previewing" v-on:click="onRestart">{{ startLabel }}</button>
+        </Transition>
     </section>
-    <TransitionGroup tag="section" class="board" name="shuffle-card">
-        <div class='card' v-for="item in cards" :key="item.id" v-on:click="onCardClick(item.id)" v-bind:class="{
-            faceup: item.faceup,
-            facedown: !item.faceup,
-        }">
-            <div class="back"></div>
-            <div class="front">
-                {{ item.value }}
-            </div>
-        </div>
-    </TransitionGroup>
     <Score :flip-count="flipCount" :remained-match-count="remainedMatchCount"
         :session="session" :start-time="startTime" />
+    <section class="boardWrap">
+        <TransitionGroup tag="section" class="board" name="shuffle-card">
+            <div class='card' v-for="item in cards" :key="item.id" v-on:click="onCardClick(item.id)" v-bind:class="{
+                faceup: item.faceup,
+                facedown: !item.faceup,
+            }">
+                <div class="back"></div>
+                <div class="front">
+                    {{ item.value }}
+                </div>
+            </div>
+        </TransitionGroup>
+    </section>
     <section class="footer">
-        <p class="battery">
-            Powered by <i class="fab fa-vuejs">3</i> | 🧑‍🚀 <br />
-            <a href="https://tigeryoo-portfolio.web.app/">🧑‍💻</a> |
-            <a href="https://github.com/MTGVim/find-a-nimal"><i class="fab fa-github"></i></a>
-        </p>
+        <div class="footer-right">
+            <div class="footer-controls">
+                <Navigate href="/leaderboard">🏆 리더보드</Navigate>
+                <slot name="footer-left"></slot>
+            </div>
+            <p class="battery">
+                Powered by <i class="fab fa-vuejs">3</i> | 🧑‍🚀 <br />
+                <a href="https://tigeryoo-portfolio.web.app/">🧑‍💻</a> |
+                <a href="https://github.com/MTGVim/find-a-nimal"><i class="fab fa-github"></i></a>
+            </p>
+        </div>
     </section>
 </template>
 
@@ -135,14 +153,10 @@ const onRestart = () => {
     color: #34495E;
 }
 
-.description {
-    margin-bottom: 1rem;
-    text-align: center;
-}
-
 .battery {
     font-size: 0.8rem;
     color: #34495E;
+    text-align: right;
 }
 
 .battery .fa-vuejs {
@@ -209,6 +223,29 @@ const onRestart = () => {
     padding: 0 24px;
 }
 
+.boardWrap {
+    position: relative;
+}
+
+.buttonToast {
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 999px;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 0.35rem 0.8rem;
+}
+
+.toast-fade-enter-active,
+.toast-fade-leave-active {
+    transition: opacity 0.2s ease;
+}
+
+.toast-fade-enter-from,
+.toast-fade-leave-to {
+    opacity: 0;
+}
+
 .score {
     margin-top: 1rem;
     text-align: center;
@@ -217,7 +254,7 @@ const onRestart = () => {
 
 .buttons {
     margin-top: 1rem;
-    padding-bottom: 20px;
+    padding-bottom: 8px;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -225,12 +262,12 @@ const onRestart = () => {
 
 .gameStart {
     background-color: #4CAF50;
-    border-radius: 5px;
+    border-radius: 4px;
     border: none;
     color: white;
     cursor: pointer;
-    font-size: large;
-    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    padding: 0.35rem 0.75rem;
 }
 
 .gameStart:hover {
@@ -246,9 +283,24 @@ const onRestart = () => {
 }
 
 .footer {
-    text-align: right;
-    padding-right: 8px;
-    padding-bottom: 20px;
+    align-items: flex-end;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 8px 20px;
+}
+
+.footer-right {
+    align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-controls {
+    align-items: center;
+    display: flex;
+    gap: 6px;
+    margin-bottom: 0.4rem;
+    transform: translateY(16px);
 }
 
 </style>
