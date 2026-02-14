@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, ref } from 'vue';
 
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -38,6 +38,8 @@ const remainedMatchCount = computed(() => {
 const startTime = ref(dayjs().valueOf());
 const flipCount = ref(0);
 const previewing = ref(false);
+const previewCountdown = ref(3);
+let previewIntervalId: ReturnType<typeof setInterval> | null = null;
 
 
 const onCardClick = (cardId: number) => {
@@ -88,8 +90,28 @@ const onRestart = () => {
     started.value = true;
     flipCount.value = 0;
     previewing.value = true;
+    previewCountdown.value = 3;
+
+    if (previewIntervalId !== null) {
+        clearInterval(previewIntervalId);
+    }
+
+    previewIntervalId = setInterval(() => {
+        if (previewCountdown.value > 1) {
+            previewCountdown.value -= 1;
+            return;
+        }
+        if (previewIntervalId !== null) {
+            clearInterval(previewIntervalId);
+            previewIntervalId = null;
+        }
+    }, 1000);
 
     setTimeout(() => {
+        if (previewIntervalId !== null) {
+            clearInterval(previewIntervalId);
+            previewIntervalId = null;
+        }
         cards.value = cards.value.map((card) => ({
             ...card,
             faceup: false,
@@ -99,26 +121,35 @@ const onRestart = () => {
     }, 3000);
 };
 
+onBeforeUnmount(() => {
+    if (previewIntervalId !== null) {
+        clearInterval(previewIntervalId);
+        previewIntervalId = null;
+    }
+});
+
 </script>
 
 <template>
     <h1 class="title">Pick A-nimal</h1>
     <section class="buttons">
-        <Transition name="toast-fade" mode="out-in">
-            <div v-if="previewing" class="buttonToast">3초 뒤 뒤집힙니다. 외우세요!</div>
-            <button v-else class="gameStart" :disabled="previewing" v-on:click="onRestart">{{ startLabel }}</button>
-        </Transition>
+        <button class="gameStart" :disabled="previewing" v-on:click="onRestart">{{ startLabel }}</button>
     </section>
     <Score :flip-count="flipCount" :remained-match-count="remainedMatchCount"
         :session="session" :start-time="startTime" />
     <section class="boardWrap">
+        <Transition name="toast-fade">
+            <div v-if="previewing" class="previewToast">
+                {{ previewCountdown }}초 뒤 뒤집힙니다. 외우세요!
+            </div>
+        </Transition>
         <TransitionGroup tag="section" class="board" name="shuffle-card">
             <div class='card' v-for="item in cards" :key="item.id" v-on:click="onCardClick(item.id)" v-bind:class="{
                 faceup: item.faceup,
                 facedown: !item.faceup,
-            }">
+            }" draggable="false">
                 <div class="back"></div>
-                <div class="front">
+                <div class="front" draggable="false">
                     {{ item.value }}
                 </div>
             </div>
@@ -168,6 +199,9 @@ const onRestart = () => {
     font-size: 3rem;
     max-height: 180px;
     position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
 }
 
 .card .front {
@@ -181,6 +215,9 @@ const onRestart = () => {
     position: absolute;
     transition: all 0.5s ease-out;
     width: 100%;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
 }
 
 .card.facedown .front {
@@ -227,13 +264,19 @@ const onRestart = () => {
     position: relative;
 }
 
-.buttonToast {
-    background: rgba(0, 0, 0, 0.7);
+.previewToast {
+    background: rgba(0, 0, 0, 0.45);
     border-radius: 999px;
     color: white;
     font-size: 0.9rem;
     font-weight: 700;
+    left: 50%;
     padding: 0.35rem 0.8rem;
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
 }
 
 .toast-fade-enter-active,
