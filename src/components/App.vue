@@ -2,13 +2,13 @@
 import { onMounted, ref } from 'vue';
 
 import { supabase } from '../libs/supabase';
-import Button from './Button.vue';
 import PickAnimal from './PickAnimal.vue';
 
 const loading = ref(false);
 const email = ref('');
-const message = ref('🔐 이메일로 링크를 보내 로그인 합니다.');
+const message = ref('🔐 이메일로 로그인합니다.');
 const session = ref(null);
+const showAuthModal = ref(false);
 
 onMounted(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -66,27 +66,36 @@ const handleUpdateUserName = async (username) => {
 </script>
 
 <template>
-    <section v-bind:class="{
-        'container': true,
-        'logged-in': session,
-        'not-logged-in': !session,
-    }">
-        <form v-if="!session" class="column" @submit.prevent="handleSignin">
-            <div class="guide">{{ message }}</div>
-            <div class="row">
-                <input class="inputField" required type="email" placeholder="Your email" v-model="email" />
-                <input type="submit" class="button" :value="loading ? 'Loading...' : '링크 보내기'" :disabled="loading" />
+    <PickAnimal :session="session">
+        <template #footer-left>
+            <button class="loginTrigger" @click="showAuthModal = true">
+                {{ session ? '계정' : '로그인' }}
+            </button>
+        </template>
+    </PickAnimal>
+
+    <section v-if="showAuthModal" class="modalBackdrop" @click.self="showAuthModal = false">
+        <div v-bind:class="{
+            'modalBody': true,
+            'logged-in': session,
+            'not-logged-in': !session,
+        }">
+            <button class="closeButton" @click="showAuthModal = false">닫기</button>
+            <form v-if="!session" class="column" @submit.prevent="handleSignin">
+                <div class="guide">{{ message }}</div>
+                <div class="row">
+                    <input class="inputField" required type="email" placeholder="Your email" v-model="email" />
+                    <input type="submit" class="actionButton" :value="loading ? 'Loading...' : '링크 보내기'" :disabled="loading" />
+                </div>
+            </form>
+            <div v-else class="column">
+                <div class="guide">👋 반가워요, {{ session.user.email.split('@').at(0) }}!</div>
+                <button class="actionButton" @click="handleSignout" :disabled="loading">
+                    {{ loading ? 'Loading...' : '로그아웃' }}
+                </button>
             </div>
-        </form>
-        <div v-else class="row">
-            👋 반가워요, {{ session.user.email.split('@').at(0) }}!
-            <!-- <Button @click="handleUpdateUserName(session.user.email.split('@').at(0))" :disabled="loading">{{ loading ? 'Loading...' :
-                '이름 변경'}}</Button> -->
-            <Button @click="handleSignout" :disabled="loading">{{ loading ? 'Loading...' :
-                '로그아웃'}}</Button>
         </div>
     </section>
-    <PickAnimal :session="session" />
 </template>
 
 <style>
@@ -96,28 +105,62 @@ const handleUpdateUserName = async (username) => {
     font-style: normal;
 }
 
-.container {
-    position: sticky;
-    top: 0;
-    padding: 0.5rem;
-    border-bottom: solid 1px lightgray;
+.loginTrigger {
+    border: solid 1px lightgray;
+    background-color: white;
+    border-radius: 4px;
+    color: #555;
+    cursor: pointer;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.45rem;
+    transition: all 0.2s ease-in-out;
 }
 
-.container.not-logged-in {
-    background-color:azure;
+.loginTrigger:hover {
+    background: #eaf2ff;
 }
 
-.container.not-logged-in .guide {
-    color:black;
+.modalBackdrop {
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.35);
+    display: flex;
+    inset: 0;
+    justify-content: center;
+    position: fixed;
+    z-index: 10;
 }
 
-.container.logged-in {
+.modalBody {
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    max-width: 360px;
+    padding: 1rem;
+    width: calc(100% - 24px);
+}
+
+.modalBody.not-logged-in {
+    background-color: azure;
+}
+
+.modalBody.logged-in {
     background-color: whitesmoke;
+}
+
+.closeButton {
+    background: transparent;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    display: block;
+    font-size: 0.8rem;
+    margin-left: auto;
+    margin-bottom: 0.5rem;
 }
 
 .guide {
     font-size: 14px;
-    color: #666;
+    color: #444;
+    margin-bottom: 0.4rem;
 }
 
 .column {
@@ -135,19 +178,19 @@ const handleUpdateUserName = async (username) => {
 }
 
 .inputField {
-    width: 160px;
+    width: 190px;
     border: 1px solid lightgray;
     padding: 0.2rem 0.4rem;
     border-radius: 5px;
 }
 
-.button {
+.actionButton {
     border: none;
     background-color: lightgray;
     border-radius: 4px;
     color: #555;
     cursor: pointer;
-    font-size: smaller;
+    font-size: 0.8rem;
     padding: 0.2rem 0.4rem;
 }
 </style>
