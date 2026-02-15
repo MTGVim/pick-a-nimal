@@ -36,4 +36,9 @@ button:active {
 button.outline {
     border: none;
 }
+
+button.selected {
+    border-color: #42b883;
+    background: #e9fff6;
+}
 </style>

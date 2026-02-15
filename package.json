@@ -14,7 +14,6 @@
   },
   "dependencies": {
     "@astrojs/vue": "^5.0.6",
-    "@supabase/supabase-js": "^2.48.1",
     "@types/canvas-confetti": "^1.9.0",
     "@vite-pwa/astro": "^0.5.0",
     "astro": "^5.1.9",
@@ -25,6 +24,8 @@
     "vue": "^3.5.13"
   },
   "devDependencies": {
-    "@types/lodash": "^4.17.14"
+    "@astrojs/check": "^0.9.6",
+    "@types/lodash": "^4.17.14",
+    "typescript": "^5.9.3"
   }
 }

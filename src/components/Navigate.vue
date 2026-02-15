@@ -1,4 +1,6 @@
-<script setup>
+<script setup lang="ts">
+import { computed } from 'vue';
+
 const props = defineProps({
     color: {
         type: String,
@@ -9,10 +11,26 @@ const props = defineProps({
         default: '/',
     }
 });
+
+const resolvedHref = computed(() => {
+    const href = props.href;
+
+    if (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('mailto:') || href.startsWith('#')) {
+        return href;
+    }
+
+    const baseUrl = import.meta.env.BASE_URL;
+
+    if (href.startsWith('/')) {
+        return `${baseUrl.replace(/\/$/, '')}${href}`;
+    }
+
+    return `${baseUrl}${href}`;
+});
 </script>
 
 <template>
-    <a :href="href" class="custom-link">
+    <a :href="resolvedHref" class="custom-link">
         <slot></slot>
     </a>
 </template>
