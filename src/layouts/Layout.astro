@@ -4,6 +4,8 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/png" href="/favicon.png" />
+		<link rel="manifest" href="/manifest.webmanifest" />
+		<meta name="theme-color" content="#34495e" />
 		<meta name="generator" content={Astro.generator} />
 		<!-- HTML Meta Tags -->
 		<title>Pick-A-nimal 🐯</title>
@@ -25,12 +27,20 @@
 		<meta name="twitter:image" content="https://opengraph.b-cdn.net/production/images/e0eebf4f-c351-41df-becf-ada50aec1ab3.png?token=ftnNBDjJuXvoi4WJOAeH5icHOb_OB6e26tNRXfuN4VM&height=1514&width=852&expires=33273894583">
 
 		<!-- Meta Tags Generated via https://www.opengraph.xyz -->
-
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
 		<script src="https://kit.fontawesome.com/4e296f881d.js" crossorigin="anonymous"></script>
-		
+		<script>
+			if ('serviceWorker' in navigator) {
+				window.addEventListener('load', () => {
+					navigator.serviceWorker.register('/sw.js').catch(() => {
+						// ignore
+					});
+				});
+			}
+		</script>
+
 	</head>
 	<body>
 		<slot />
