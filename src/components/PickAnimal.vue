@@ -58,6 +58,8 @@ const selectedCards = ref<{ id: number, value: string, faceup: boolean }[]>([]);
 const matchedIds = ref(new Set<number>());
 const matchedFlashIds = ref(new Set<number>());
 const mismatchIds = ref<number[]>([]);
+const victoryCelebrating = ref(false);
+let victoryRepeatTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
 const startLabel = computed(() => {
     return started.value ? '다시 하기' : '시작 하기';
@@ -105,6 +107,18 @@ const setManagedTimeout = (callback: () => void, ms: number) => {
     pendingTimeoutIds.push(timeoutId);
 };
 
+const clearManagedTimeouts = () => {
+    pendingTimeoutIds.forEach((timeoutId) => clearTimeout(timeoutId));
+    pendingTimeoutIds.length = 0;
+};
+
+const clearPreviewInterval = () => {
+    if (previewIntervalId !== null) {
+        clearInterval(previewIntervalId);
+        previewIntervalId = null;
+    }
+};
+
 const triggerMatchedFlash = (...cardIds: number[]) => {
     cardIds.forEach((cardId) => matchedFlashIds.value.add(cardId));
     setManagedTimeout(() => {
@@ -119,11 +133,39 @@ const triggerMismatchFeedback = (...cardIds: number[]) => {
     }, 650);
 };
 
+const clearVictoryFanLoop = () => {
+    victoryCelebrating.value = false;
+    if (victoryRepeatTimeoutId !== null) {
+        clearTimeout(victoryRepeatTimeoutId);
+        victoryRepeatTimeoutId = null;
+    }
+};
+
+const startVictoryFanMotion = () => {
+    clearVictoryFanLoop();
+    victoryCelebrating.value = true;
+    setManagedTimeout(() => {
+        victoryCelebrating.value = false;
+        if (started.value && matchedIds.value.size === cards.value.length) {
+            if (victoryRepeatTimeoutId !== null) {
+                clearTimeout(victoryRepeatTimeoutId);
+            }
+            victoryRepeatTimeoutId = setTimeout(() => {
+                victoryRepeatTimeoutId = null;
+                startVictoryFanMotion();
+            }, 3000);
+        }
+    }, 1200);
+};
+
 const resetBoardByMode = (mode: GameMode) => {
+    clearPreviewInterval();
+    clearManagedTimeouts();
     selectedCards.value = [];
     matchedIds.value = new Set<number>();
     matchedFlashIds.value = new Set<number>();
     mismatchIds.value = [];
+    clearVictoryFanLoop();
     flipCount.value = 0;
     started.value = false;
     previewing.value = false;
@@ -172,22 +214,23 @@ const onCardClick = (cardId: number) => {
 
             if (matchedIds.value.size === cards.value.length) {
                 playWinAudio();
+                startVictoryFanMotion();
             }
         }
         else {
             triggerMismatchFeedback(firstCard.id, secondCard.id);
+            selectedCards.value = [];
             setManagedTimeout(() => {
                 firstCard.faceup = false;
                 secondCard.faceup = false;
-                selectedCards.value = [];
-            }, 1000);
+            }, 450);
         }
     }
 };
 
 const onRestart = () => {
-    if (previewing.value)
-        return;
+    clearPreviewInterval();
+    clearManagedTimeouts();
 
     const isFirstStart = !started.value;
 
@@ -195,6 +238,7 @@ const onRestart = () => {
     matchedIds.value = new Set<number>();
     matchedFlashIds.value = new Set<number>();
     mismatchIds.value = [];
+    clearVictoryFanLoop();
 
     if (isFirstStart) {
         cards.value = _.shuffle(cards.value).map((card) => ({
@@ -214,26 +258,16 @@ const onRestart = () => {
     previewing.value = true;
     previewCountdown.value = 5;
 
-    if (previewIntervalId !== null) {
-        clearInterval(previewIntervalId);
-    }
-
     previewIntervalId = setInterval(() => {
         if (previewCountdown.value > 1) {
             previewCountdown.value -= 1;
             return;
         }
-        if (previewIntervalId !== null) {
-            clearInterval(previewIntervalId);
-            previewIntervalId = null;
-        }
+        clearPreviewInterval();
     }, 1000);
 
     setManagedTimeout(() => {
-        if (previewIntervalId !== null) {
-            clearInterval(previewIntervalId);
-            previewIntervalId = null;
-        }
+        clearPreviewInterval();
         cards.value = cards.value.map((card) => ({
             ...card,
             faceup: false,
@@ -244,12 +278,9 @@ const onRestart = () => {
 };
 
 onBeforeUnmount(() => {
-    if (previewIntervalId !== null) {
-        clearInterval(previewIntervalId);
-        previewIntervalId = null;
-    }
-    pendingTimeoutIds.forEach((timeoutId) => clearTimeout(timeoutId));
-    pendingTimeoutIds.length = 0;
+    clearVictoryFanLoop();
+    clearPreviewInterval();
+    clearManagedTimeouts();
 });
 
 </script>
@@ -261,7 +292,7 @@ onBeforeUnmount(() => {
         <button class="modeButton" :class="{ selected: isHardMode }" :disabled="previewing" @click="onModeClick('hard')">어려움 4x6</button>
     </section>
     <section class="buttons">
-        <button class="gameStart" :disabled="previewing" v-on:click="onRestart">{{ startLabel }}</button>
+        <button class="gameStart" v-on:click="onRestart">{{ startLabel }}</button>
     </section>
     <Score :flip-count="flipCount" :remained-match-count="remainedMatchCount" :start-time="startTime" :difficulty="gameMode" />
     <section class="boardWrap">
@@ -277,6 +308,7 @@ onBeforeUnmount(() => {
                 matched: matchedIds.has(item.id),
                 matchedFlash: matchedFlashIds.has(item.id),
                 mismatch: mismatchIds.includes(item.id),
+                victoryCelebrate: matchedIds.has(item.id) && victoryCelebrating,
             }" draggable="false">
                 <div class="back"></div>
                 <div class="front" draggable="false">
@@ -354,12 +386,12 @@ onBeforeUnmount(() => {
 }
 
 .card.matched .front {
-    box-shadow: 0 0 0 2px #ffd966 inset;
+    box-shadow: 0 0 0 3px #b8efb3 inset;
 }
 
 .card.matchedFlash .front {
     animation: matched-pop 0.42s ease-out;
-    box-shadow: 0 0 0 3px #ffea8a inset, 0 0 18px rgba(255, 214, 60, 0.8);
+    box-shadow: 0 0 0 4px #c8f6c4 inset, 0 0 18px rgba(146, 224, 136, 0.7);
 }
 
 .card.mismatch {
@@ -367,7 +399,13 @@ onBeforeUnmount(() => {
 }
 
 .card.mismatch .front {
-    box-shadow: 0 0 0 3px #ff6b6b inset, 0 0 14px rgba(255, 107, 107, 0.5);
+    box-shadow: 0 0 0 4px #ff6b6b inset, 0 0 14px rgba(255, 107, 107, 0.5);
+}
+
+.card.victoryCelebrate {
+    animation: victory-sway 1.2s ease-in-out both;
+    transform-origin: center;
+    z-index: 2;
 }
 
 .card .front {
@@ -545,6 +583,24 @@ onBeforeUnmount(() => {
     }
     80% {
         translate: 5px 0;
+    }
+}
+
+@keyframes victory-sway {
+    0% {
+        transform: translateX(0) rotate(0deg) scale(1);
+    }
+    20% {
+        transform: translateX(-3px) rotate(-2deg) scale(1.05);
+    }
+    50% {
+        transform: translateX(3px) rotate(2deg) scale(1.03);
+    }
+    80% {
+        transform: translateX(-2px) rotate(-1.2deg) scale(1.04);
+    }
+    100% {
+        transform: translateX(0) rotate(0deg) scale(1);
     }
 }
 
