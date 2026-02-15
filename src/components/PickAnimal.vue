@@ -58,8 +58,6 @@ const selectedCards = ref<{ id: number, value: string, faceup: boolean }[]>([]);
 const matchedIds = ref(new Set<number>());
 const matchedFlashIds = ref(new Set<number>());
 const mismatchIds = ref<number[]>([]);
-const victoryThrowing = ref(false);
-const victoryThrowStyleById = ref<Record<number, Record<string, string>>>({});
 
 const startLabel = computed(() => {
     return started.value ? '다시 하기' : '시작 하기';
@@ -118,26 +116,7 @@ const triggerMismatchFeedback = (...cardIds: number[]) => {
     mismatchIds.value = Array.from(new Set([...mismatchIds.value, ...cardIds]));
     setManagedTimeout(() => {
         mismatchIds.value = mismatchIds.value.filter((cardId) => !cardIds.includes(cardId));
-    }, 420);
-};
-
-const startVictoryThrowMotion = () => {
-    victoryThrowing.value = true;
-    const styles: Record<number, Record<string, string>> = {};
-    cards.value.forEach((card, index) => {
-        const horizontalDirection = index % 2 === 0 ? -1 : 1;
-        const throwX = (40 + Math.random() * 140) * horizontalDirection;
-        const throwRotate = (220 + Math.random() * 420) * horizontalDirection;
-        const throwLift = 80 + Math.random() * 90;
-        const throwDelay = Math.random() * 0.32;
-        styles[card.id] = {
-            '--throw-x': `${throwX}px`,
-            '--throw-rotate': `${throwRotate}deg`,
-            '--throw-lift': `${throwLift}px`,
-            '--throw-delay': `${throwDelay}s`,
-        };
-    });
-    victoryThrowStyleById.value = styles;
+    }, 650);
 };
 
 const resetBoardByMode = (mode: GameMode) => {
@@ -145,8 +124,6 @@ const resetBoardByMode = (mode: GameMode) => {
     matchedIds.value = new Set<number>();
     matchedFlashIds.value = new Set<number>();
     mismatchIds.value = [];
-    victoryThrowing.value = false;
-    victoryThrowStyleById.value = {};
     flipCount.value = 0;
     started.value = false;
     previewing.value = false;
@@ -195,7 +172,6 @@ const onCardClick = (cardId: number) => {
 
             if (matchedIds.value.size === cards.value.length) {
                 playWinAudio();
-                startVictoryThrowMotion();
             }
         }
         else {
@@ -219,8 +195,6 @@ const onRestart = () => {
     matchedIds.value = new Set<number>();
     matchedFlashIds.value = new Set<number>();
     mismatchIds.value = [];
-    victoryThrowing.value = false;
-    victoryThrowStyleById.value = {};
 
     if (isFirstStart) {
         cards.value = _.shuffle(cards.value).map((card) => ({
@@ -303,8 +277,7 @@ onBeforeUnmount(() => {
                 matched: matchedIds.has(item.id),
                 matchedFlash: matchedFlashIds.has(item.id),
                 mismatch: mismatchIds.includes(item.id),
-                victoryThrow: matchedIds.has(item.id) && victoryThrowing,
-            }" :style="victoryThrowStyleById[item.id]" draggable="false">
+            }" draggable="false">
                 <div class="back"></div>
                 <div class="front" draggable="false">
                     {{ item.value }}
@@ -389,14 +362,8 @@ onBeforeUnmount(() => {
     box-shadow: 0 0 0 3px #ffea8a inset, 0 0 18px rgba(255, 214, 60, 0.8);
 }
 
-.card.victoryThrow {
-    animation: victory-throw 1.25s cubic-bezier(0.18, 0.84, 0.34, 0.98) forwards;
-    animation-delay: var(--throw-delay, 0s);
-    pointer-events: none;
-}
-
 .card.mismatch {
-    animation: mismatch-shake 0.42s ease-in-out;
+    animation: mismatch-shake 0.5s ease-in-out;
 }
 
 .card.mismatch .front {
@@ -563,32 +530,21 @@ onBeforeUnmount(() => {
     }
 }
 
-@keyframes victory-throw {
-    0% {
-        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
-        opacity: 1;
-    }
-    100% {
-        transform: translate3d(var(--throw-x, 0), calc(-1 * var(--throw-lift, 100px)), 0) rotate(var(--throw-rotate, 360deg)) scale(0.2);
-        opacity: 0;
-    }
-}
-
 @keyframes mismatch-shake {
     0%, 100% {
-        transform: translateX(0);
+        translate: 0 0;
     }
     20% {
-        transform: translateX(-6px) rotate(-1.5deg);
+        translate: -7px 0;
     }
     40% {
-        transform: translateX(6px) rotate(1.5deg);
+        translate: 7px 0;
     }
     60% {
-        transform: translateX(-4px) rotate(-1deg);
+        translate: -5px 0;
     }
     80% {
-        transform: translateX(4px) rotate(1deg);
+        translate: 5px 0;
     }
 }
 
