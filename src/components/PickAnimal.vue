@@ -60,6 +60,8 @@ const matchedFlashIds = ref(new Set<number>());
 const mismatchIds = ref<number[]>([]);
 const victoryCelebrating = ref(false);
 let victoryRepeatTimeoutId: ReturnType<typeof setTimeout> | null = null;
+const mismatchAnimationMs = 560;
+const mismatchFlipBackDelayMs = 760;
 
 const startLabel = computed(() => {
     return started.value ? '다시 하기' : '시작 하기';
@@ -130,7 +132,7 @@ const triggerMismatchFeedback = (...cardIds: number[]) => {
     mismatchIds.value = Array.from(new Set([...mismatchIds.value, ...cardIds]));
     setManagedTimeout(() => {
         mismatchIds.value = mismatchIds.value.filter((cardId) => !cardIds.includes(cardId));
-    }, 650);
+    }, mismatchAnimationMs);
 };
 
 const clearVictoryFanLoop = () => {
@@ -223,7 +225,7 @@ const onCardClick = (cardId: number) => {
             setManagedTimeout(() => {
                 firstCard.faceup = false;
                 secondCard.faceup = false;
-            }, 450);
+            }, mismatchFlipBackDelayMs);
         }
     }
 };
@@ -296,6 +298,11 @@ onBeforeUnmount(() => {
     </section>
     <Score :flip-count="flipCount" :remained-match-count="remainedMatchCount" :start-time="startTime" :difficulty="gameMode" />
     <section class="boardWrap">
+        <Transition name="toast-fade">
+            <div v-if="previewing" class="previewToast">
+                {{ previewCountdown }}
+            </div>
+        </Transition>
         <TransitionGroup tag="section" class="board" :class="{ hard: isHardMode }" name="shuffle-card">
             <div class='card' v-for="item in cards" :key="item.id" v-on:click="onCardClick(item.id)" v-bind:class="{
                 faceup: item.faceup,
@@ -390,7 +397,7 @@ onBeforeUnmount(() => {
 }
 
 .card.mismatch {
-    animation: mismatch-shake 0.5s ease-in-out;
+    animation: mismatch-shake 0.56s ease-in-out;
 }
 
 .card.mismatch .front {
@@ -467,6 +474,33 @@ onBeforeUnmount(() => {
 
 .boardWrap {
     position: relative;
+}
+
+.previewToast {
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 999px;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 800;
+    left: 50%;
+    min-width: 2.2rem;
+    padding: 0.25rem 0.7rem;
+    pointer-events: none;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+}
+
+.toast-fade-enter-active,
+.toast-fade-leave-active {
+    transition: opacity 0.2s ease;
+}
+
+.toast-fade-enter-from,
+.toast-fade-leave-to {
+    opacity: 0;
 }
 
 .score {
