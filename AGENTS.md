@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 This is an Astro + Vue 3 app deployed to Firebase Hosting.
-Use Node.js `20.18.1+` (`.nvmrc`).
+Use Node.js `20.19.0+` (`.nvmrc`).
 
 - `src/pages/`: Astro route entry points (`index.astro`, `leaderboard.astro`).
 - `src/components/`: Vue SFC UI and game logic (PascalCase files like `PickAnimal.vue`).

@@ -9,22 +9,46 @@ import Score from './Score.vue';
 
 const { session } = defineProps(['session']);
 
-const animals = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'] as const;
+const faceEmojiPresets = [
+    ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣'],
+    ['🙂', '🙃', '😉', '😊', '😇', '🥰', '😍', '🤩'],
+    ['😘', '😗', '😚', '😙', '🥲', '😋', '😛', '😜'],
+    ['🤪', '😝', '🫠', '🤗', '🤭', '🫢', '🫣', '🤫'],
+    ['🤔', '🫡', '🤐', '🤨', '😐', '😑', '😶', '🫥'],
+    ['😏', '😒', '🙄', '😬', '😮‍💨', '🤥', '🫨', '😌'],
+    ['😔', '😪', '🤤', '😴', '🫩', '😷', '🤒', '🤕'],
+    ['🤢', '🤮', '🤧', '🥵', '🥶', '🥴', '😵', '🤯'],
+    ['🤠', '🥳', '🥸', '😎', '🤓', '🧐', '😕', '🫤'],
+    ['😟', '🙁', '☹️', '😮', '😯', '😲', '😳', '🥺'],
+    ['😦', '😧', '😨', '😰', '😥', '😢', '😭', '😱'],
+    ['😖', '😣', '😞', '😓', '😩', '😫', '🥱', '😤'],
+    ['😡', '😠', '🤬', '😈', '👿', '💀', '☠️', '👻'],
+    ['👽', '🤖', '😺', '😸', '😹', '😻', '😼', '😽'],
+] as const;
 
-const started = ref(false);
+const pickRandomFacePreset = () => {
+    const randomIndex = Math.floor(Math.random() * faceEmojiPresets.length);
+    return [...faceEmojiPresets[randomIndex]];
+};
 
-const cards = ref(
-    Array
+const createCards = (animals: string[]) => {
+    return Array
         .from({ length: animals.length }, (_, i) => i)
         .flatMap((i) => {
             return [
                 { id: i * 2, value: animals[i], faceup: true },
                 { id: i * 2 + 1, value: animals[i], faceup: true },
             ];
-        })
-);
+        });
+};
 
-const selectedCards = ref<{ id: number, value: typeof animals[number], faceup: boolean }[]>([]);
+const currentAnimals = ref(pickRandomFacePreset());
+
+const started = ref(false);
+
+const cards = ref(createCards(currentAnimals.value));
+
+const selectedCards = ref<{ id: number, value: string, faceup: boolean }[]>([]);
 const matchedIds = ref(new Set<number>());
 
 const startLabel = computed(() => {
@@ -40,6 +64,19 @@ const flipCount = ref(0);
 const previewing = ref(false);
 const previewCountdown = ref(3);
 let previewIntervalId: ReturnType<typeof setInterval> | null = null;
+const winAudio = typeof Audio === 'undefined'
+    ? null
+    : new Audio(`${import.meta.env.BASE_URL}sounds/ta-da.mp3`);
+
+const playWinAudio = () => {
+    if (!winAudio)
+        return;
+
+    winAudio.currentTime = 0;
+    void winAudio.play().catch(() => {
+        // Ignore autoplay-related failures.
+    });
+};
 
 
 const onCardClick = (cardId: number) => {
@@ -66,6 +103,10 @@ const onCardClick = (cardId: number) => {
             matchedIds.value.add(firstCard?.id);
             matchedIds.value.add(secondCard?.id);
             selectedCards.value = [];
+
+            if (matchedIds.value.size === cards.value.length) {
+                playWinAudio();
+            }
         }
         else {
             setTimeout(() => {
@@ -83,7 +124,8 @@ const onRestart = () => {
 
     selectedCards.value = [];
     matchedIds.value = new Set<number>();
-    cards.value = _.shuffle(cards.value).map((card) => {
+    currentAnimals.value = pickRandomFacePreset();
+    cards.value = _.shuffle(createCards(currentAnimals.value)).map((card) => {
         card.faceup = true;
         return card;
     });
