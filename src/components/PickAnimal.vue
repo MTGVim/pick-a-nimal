@@ -296,11 +296,6 @@ onBeforeUnmount(() => {
     </section>
     <Score :flip-count="flipCount" :remained-match-count="remainedMatchCount" :start-time="startTime" :difficulty="gameMode" />
     <section class="boardWrap">
-        <Transition name="toast-fade">
-            <div v-if="previewing" class="previewToast">
-                {{ previewCountdown }}초 뒤 뒤집힙니다.
-            </div>
-        </Transition>
         <TransitionGroup tag="section" class="board" :class="{ hard: isHardMode }" name="shuffle-card">
             <div class='card' v-for="item in cards" :key="item.id" v-on:click="onCardClick(item.id)" v-bind:class="{
                 faceup: item.faceup,
@@ -472,31 +467,6 @@ onBeforeUnmount(() => {
 
 .boardWrap {
     position: relative;
-}
-
-.previewToast {
-    background: rgba(0, 0, 0, 0.45);
-    border-radius: 999px;
-    color: white;
-    font-size: 0.9rem;
-    font-weight: 700;
-    left: 50%;
-    padding: 0.35rem 0.8rem;
-    pointer-events: none;
-    position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 3;
-}
-
-.toast-fade-enter-active,
-.toast-fade-leave-active {
-    transition: opacity 0.2s ease;
-}
-
-.toast-fade-enter-from,
-.toast-fade-leave-to {
-    opacity: 0;
 }
 
 .score {
