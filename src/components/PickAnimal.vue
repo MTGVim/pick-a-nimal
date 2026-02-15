@@ -57,6 +57,7 @@ const cards = ref(createCards(currentAnimals.value));
 const selectedCards = ref<{ id: number, value: string, faceup: boolean }[]>([]);
 const matchedIds = ref(new Set<number>());
 const matchedFlashIds = ref(new Set<number>());
+const mismatchIds = ref(new Set<number>());
 const victoryThrowing = ref(false);
 const victoryThrowStyleById = ref<Record<number, Record<string, string>>>({});
 
@@ -113,6 +114,13 @@ const triggerMatchedFlash = (...cardIds: number[]) => {
     }, 420);
 };
 
+const triggerMismatchFeedback = (...cardIds: number[]) => {
+    cardIds.forEach((cardId) => mismatchIds.value.add(cardId));
+    setManagedTimeout(() => {
+        cardIds.forEach((cardId) => mismatchIds.value.delete(cardId));
+    }, 420);
+};
+
 const startVictoryThrowMotion = () => {
     victoryThrowing.value = true;
     const styles: Record<number, Record<string, string>> = {};
@@ -136,6 +144,7 @@ const resetBoardByMode = (mode: GameMode) => {
     selectedCards.value = [];
     matchedIds.value = new Set<number>();
     matchedFlashIds.value = new Set<number>();
+    mismatchIds.value = new Set<number>();
     victoryThrowing.value = false;
     victoryThrowStyleById.value = {};
     flipCount.value = 0;
@@ -190,6 +199,7 @@ const onCardClick = (cardId: number) => {
             }
         }
         else {
+            triggerMismatchFeedback(firstCard.id, secondCard.id);
             setManagedTimeout(() => {
                 firstCard.faceup = false;
                 secondCard.faceup = false;
@@ -208,6 +218,7 @@ const onRestart = () => {
     selectedCards.value = [];
     matchedIds.value = new Set<number>();
     matchedFlashIds.value = new Set<number>();
+    mismatchIds.value = new Set<number>();
     victoryThrowing.value = false;
     victoryThrowStyleById.value = {};
 
@@ -291,6 +302,7 @@ onBeforeUnmount(() => {
                 facedown: !item.faceup,
                 matched: matchedIds.has(item.id),
                 matchedFlash: matchedFlashIds.has(item.id),
+                mismatch: mismatchIds.has(item.id),
                 victoryThrow: matchedIds.has(item.id) && victoryThrowing,
             }" :style="victoryThrowStyleById[item.id]" draggable="false">
                 <div class="back"></div>
@@ -381,6 +393,14 @@ onBeforeUnmount(() => {
     animation: victory-throw 1.25s cubic-bezier(0.18, 0.84, 0.34, 0.98) forwards;
     animation-delay: var(--throw-delay, 0s);
     pointer-events: none;
+}
+
+.card.mismatch {
+    animation: mismatch-shake 0.42s ease-in-out;
+}
+
+.card.mismatch .front {
+    box-shadow: 0 0 0 3px #ff6b6b inset, 0 0 14px rgba(255, 107, 107, 0.5);
 }
 
 .card .front {
@@ -551,6 +571,24 @@ onBeforeUnmount(() => {
     100% {
         transform: translate3d(var(--throw-x, 0), calc(-1 * var(--throw-lift, 100px)), 0) rotate(var(--throw-rotate, 360deg)) scale(0.2);
         opacity: 0;
+    }
+}
+
+@keyframes mismatch-shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    20% {
+        transform: translateX(-6px) rotate(-1.5deg);
+    }
+    40% {
+        transform: translateX(6px) rotate(1.5deg);
+    }
+    60% {
+        transform: translateX(-4px) rotate(-1deg);
+    }
+    80% {
+        transform: translateX(4px) rotate(1deg);
     }
 }
 
