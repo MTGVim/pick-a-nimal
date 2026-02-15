@@ -8,14 +8,14 @@ import Navigate from './Navigate.vue';
 import Score from './Score.vue';
 
 const faceEmojiPresets = [
-    ['🐯', '🐶', '🐱', '🐻', '🐼', '🐨', '🦊', '🐰'],
-    ['🐮', '🐷', '🐸', '🐵', '🦁', '🐺', '🦄', '🐔'],
-    ['🐧', '🐢', '🐙', '🦖', '🦕', '🐬', '🐳', '🦭'],
-    ['🐹', '🐭', '🐗', '🐴', '🫏', '🐑', '🐐', '🦌'],
-    ['🦬', '🦒', '🦘', '🦥', '🦦', '🦝', '🦜', '🦩'],
-    ['🦚', '🦉', '🦆', '🐊', '🐍', '🦎', '🦂', '🕷️'],
-    ['🐢', '🐸', '🦭', '🐬', '🐳', '🐙', '🦈', '🐡'],
-    ['🐾', '🐯', '🦊', '🐻', '🐶', '🐱', '🦁', '🐺'],
+    ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'],
+    ['🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐵', '🐺'],
+    ['🐗', '🐴', '🦄', '🐲', '🦝', '🐶', '🐱', '🦊'],
+    ['🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸'],
+    ['🐵', '🐺', '🐗', '🐴', '🦄', '🐲', '🦝', '🐰'],
+    ['🐭', '🐹', '🐶', '🐱', '🐻', '🐼', '🐨', '🐯'],
+    ['🦁', '🐮', '🐷', '🐸', '🐵', '🐺', '🐗', '🐴'],
+    ['🦄', '🐲', '🦝', '🦊', '🐰', '🐭', '🐹', '🐶'],
 ] as const;
 
 type GameMode = 'easy' | 'hard';
@@ -57,7 +57,7 @@ const cards = ref(createCards(currentAnimals.value));
 const selectedCards = ref<{ id: number, value: string, faceup: boolean }[]>([]);
 const matchedIds = ref(new Set<number>());
 const matchedFlashIds = ref(new Set<number>());
-const mismatchIds = ref(new Set<number>());
+const mismatchIds = ref<number[]>([]);
 const victoryThrowing = ref(false);
 const victoryThrowStyleById = ref<Record<number, Record<string, string>>>({});
 
@@ -115,9 +115,9 @@ const triggerMatchedFlash = (...cardIds: number[]) => {
 };
 
 const triggerMismatchFeedback = (...cardIds: number[]) => {
-    cardIds.forEach((cardId) => mismatchIds.value.add(cardId));
+    mismatchIds.value = Array.from(new Set([...mismatchIds.value, ...cardIds]));
     setManagedTimeout(() => {
-        cardIds.forEach((cardId) => mismatchIds.value.delete(cardId));
+        mismatchIds.value = mismatchIds.value.filter((cardId) => !cardIds.includes(cardId));
     }, 420);
 };
 
@@ -144,7 +144,7 @@ const resetBoardByMode = (mode: GameMode) => {
     selectedCards.value = [];
     matchedIds.value = new Set<number>();
     matchedFlashIds.value = new Set<number>();
-    mismatchIds.value = new Set<number>();
+    mismatchIds.value = [];
     victoryThrowing.value = false;
     victoryThrowStyleById.value = {};
     flipCount.value = 0;
@@ -218,7 +218,7 @@ const onRestart = () => {
     selectedCards.value = [];
     matchedIds.value = new Set<number>();
     matchedFlashIds.value = new Set<number>();
-    mismatchIds.value = new Set<number>();
+    mismatchIds.value = [];
     victoryThrowing.value = false;
     victoryThrowStyleById.value = {};
 
@@ -302,7 +302,7 @@ onBeforeUnmount(() => {
                 facedown: !item.faceup,
                 matched: matchedIds.has(item.id),
                 matchedFlash: matchedFlashIds.has(item.id),
-                mismatch: mismatchIds.has(item.id),
+                mismatch: mismatchIds.includes(item.id),
                 victoryThrow: matchedIds.has(item.id) && victoryThrowing,
             }" :style="victoryThrowStyleById[item.id]" draggable="false">
                 <div class="back"></div>
