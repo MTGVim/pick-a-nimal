@@ -91,19 +91,60 @@ const gameBragMessages = [
     '기억력 올타임 하이! $BEST_TIME | $BEST_FLIP_COUNT 회 📈',
 ];
 
-const copyGameBragMessageAsync = async () => {
+const buildBragMessage = () => {
     const message = _.sample(gameBragMessages)!;
     const challengeUrl = new URL(import.meta.env.BASE_URL, window.location.origin).toString();
     const formattedMessage = message
         .replace('$BEST_TIME', bestElapsedTimeText.value)
         .replace('$BEST_FLIP_COUNT', bestFlipCount.value.toString())
         + `\n나도 도전하기: ${challengeUrl}`;
+    return {
+        challengeUrl,
+        formattedMessage,
+    };
+};
+
+const copyGameBragMessageAsync = async () => {
+    const {
+        formattedMessage,
+    } = buildBragMessage();
 
     try {
         await navigator.clipboard.writeText(formattedMessage);
         bragCopyStatus.value = 'success';
     } catch {
         bragCopyStatus.value = 'error';
+    }
+
+    setTimeout(() => {
+        bragCopyStatus.value = null;
+    }, 2000);
+};
+
+const shareGameBragMessageAsync = async () => {
+    const {
+        challengeUrl,
+        formattedMessage,
+    } = buildBragMessage();
+
+    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+        try {
+            await navigator.share({
+                title: 'Pick-A-nimal',
+                text: formattedMessage,
+                url: challengeUrl,
+            });
+            bragCopyStatus.value = 'success';
+        } catch (error) {
+            const isAbort = error instanceof DOMException && error.name === 'AbortError';
+            if (!isAbort) {
+                await copyGameBragMessageAsync();
+                return;
+            }
+        }
+    } else {
+        await copyGameBragMessageAsync();
+        return;
     }
 
     setTimeout(() => {
@@ -157,11 +198,11 @@ watch(() => difficulty.value, () => {
         <div v-if="bestFlipCount > 0">
             <b>👑 최고 기록 👑</b><br />
             <span>{{ bestElapsedTimeText }} | 뒤집기 {{ bestFlipCount }}회 |
-                <button v-if="bestFlipCount > 0" class="shareButton" @click="copyGameBragMessageAsync">공유</button>
+                <button v-if="bestFlipCount > 0" class="shareButton" @click="shareGameBragMessageAsync">공유</button>
             </span>
         </div>
-        <span v-if="bragCopyStatus === 'success'">클립보드에 복사 완료! ✅</span>
-        <span v-if="bragCopyStatus === 'error'">복사 실패 ❌</span>
+        <span v-if="bragCopyStatus === 'success'">공유/복사 완료! ✅</span>
+        <span v-if="bragCopyStatus === 'error'">공유/복사 실패 ❌</span>
     </section>
 </template>
 

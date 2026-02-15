@@ -296,7 +296,6 @@ onBeforeUnmount(() => {
     <section class="buttons">
         <button class="gameStart" v-on:click="onRestart">{{ startLabel }}</button>
     </section>
-    <Score :flip-count="flipCount" :remained-match-count="remainedMatchCount" :start-time="startTime" :difficulty="gameMode" />
     <section class="boardWrap">
         <Transition name="toast-fade">
             <div v-if="previewing" class="previewToast">
@@ -319,6 +318,7 @@ onBeforeUnmount(() => {
             </div>
         </TransitionGroup>
     </section>
+    <Score :flip-count="flipCount" :remained-match-count="remainedMatchCount" :start-time="startTime" :difficulty="gameMode" />
     <section class="footer">
         <div class="footer-right">
             <div class="footer-controls">

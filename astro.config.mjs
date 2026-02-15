@@ -19,6 +19,7 @@ export default defineConfig({
     vue(),
     PWA({
       injectRegister: false,
+      registerType: 'autoUpdate',
       devOptions: {
         enabled: true,
         type: 'module',
@@ -51,6 +52,8 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,mp3,json,txt}'],
         navigateFallback: `${base}index.html`,
+        skipWaiting: true,
+        clientsClaim: true,
         cleanupOutdatedCaches: true,
       },
     }),
