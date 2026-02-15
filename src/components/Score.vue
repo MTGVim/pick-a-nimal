@@ -214,7 +214,7 @@ watch(() => difficulty.value, () => {
 }
 
 .score {
-    margin-top: 0.2rem;
+    margin-top: 1rem;
     margin-bottom: 1rem;
     text-align: center;
     font-size: 0.95rem;

@@ -473,6 +473,8 @@ onBeforeUnmount(() => {
 }
 
 .boardWrap {
+    margin-top: 0.9rem;
+    margin-bottom: 1.2rem;
     position: relative;
 }
 
