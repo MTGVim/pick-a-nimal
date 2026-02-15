@@ -93,10 +93,11 @@ const gameBragMessages = [
 
 const copyGameBragMessageAsync = async () => {
     const message = _.sample(gameBragMessages)!;
+    const challengeUrl = new URL(import.meta.env.BASE_URL, window.location.origin).toString();
     const formattedMessage = message
         .replace('$BEST_TIME', bestElapsedTimeText.value)
         .replace('$BEST_FLIP_COUNT', bestFlipCount.value.toString())
-        + '\n나도 도전하기: https://pick-a-nimal.web.app/';
+        + `\n나도 도전하기: ${challengeUrl}`;
 
     try {
         await navigator.clipboard.writeText(formattedMessage);

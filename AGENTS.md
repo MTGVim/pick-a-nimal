@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-This is an Astro + Vue 3 app deployed to Firebase Hosting.
+This is an Astro + Vue 3 app deployed to GitHub Pages.
 Use Node.js `20.19.0+` (`.nvmrc`).
 
 - `src/pages/`: Astro route entry points (`index.astro`, `leaderboard.astro`).
@@ -9,7 +9,7 @@ Use Node.js `20.19.0+` (`.nvmrc`).
 - `src/layouts/`: shared Astro layout wrappers.
 - `src/libs/`: app utility modules (for example `leaderboard.ts`).
 - `public/`: static assets served as-is.
-- `.github/workflows/`: CI/CD for PR preview deploys and `main` production deploys.
+- `.github/workflows/`: CI build checks for PRs and `main` production deploys.
 
 ## Build, Test, and Development Commands
 - `yarn install`: install dependencies.
