@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, ref } from 'vue';
 
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -93,39 +93,6 @@ const playAudio = (audio: Audio | null, allowOverlap = false) => {
 
 const playWinAudio = () => {
     playAudio(winAudio);
-};
-
-type BeforeInstallPromptEvent = Event & {
-    prompt: () => Promise<void>;
-    userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
-};
-
-const deferredPrompt = ref<BeforeInstallPromptEvent | null>(null);
-const canInstallPwa = ref(false);
-const showIosInstallHint = ref(false);
-
-const onBeforeInstallPrompt = (event: Event) => {
-    deferredPrompt.value = event as BeforeInstallPromptEvent;
-    canInstallPwa.value = true;
-};
-
-const onAppInstalled = () => {
-    deferredPrompt.value = null;
-    canInstallPwa.value = false;
-    showIosInstallHint.value = false;
-};
-
-const onInstallPwaClick = async () => {
-    if (!deferredPrompt.value) {
-        return;
-    }
-
-    await deferredPrompt.value.prompt();
-    const result = await deferredPrompt.value.userChoice;
-    if (result.outcome === 'accepted') {
-        canInstallPwa.value = false;
-    }
-    deferredPrompt.value = null;
 };
 
 const setManagedTimeout = (callback: () => void, ms: number) => {
@@ -298,20 +265,6 @@ onBeforeUnmount(() => {
     }
     pendingTimeoutIds.forEach((timeoutId) => clearTimeout(timeoutId));
     pendingTimeoutIds.length = 0;
-
-    window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt);
-    window.removeEventListener('appinstalled', onAppInstalled);
-});
-
-onMounted(() => {
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-    const isIos = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
-    const isSafari = /safari/i.test(window.navigator.userAgent) && !/chrome|android/i.test(window.navigator.userAgent);
-
-    showIosInstallHint.value = !isStandalone && isIos && isSafari;
-
-    window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt);
-    window.addEventListener('appinstalled', onAppInstalled);
 });
 
 </script>
@@ -351,11 +304,7 @@ onMounted(() => {
         <div class="footer-right">
             <div class="footer-controls">
                 <Navigate href="/leaderboard">🏆 리더보드</Navigate>
-                <button v-if="canInstallPwa" class="installPwa" @click="onInstallPwaClick">
-                    📲 앱 설치
-                </button>
             </div>
-            <p v-if="showIosInstallHint" class="installHint">iOS: 공유 버튼 → 홈 화면에 추가</p>
             <p class="battery">
                 Powered by <i class="fab fa-vuejs">3</i> | 🧑‍🚀 <br />
                 <a href="https://tigeryoo-portfolio.web.app/">🧑‍💻</a> |
@@ -387,23 +336,6 @@ onMounted(() => {
 
 .battery .fa-vuejs {
     color: #41B883;
-}
-
-.installPwa {
-    border: solid 1px lightgray;
-    background-color: white;
-    border-radius: 4px;
-    color: #555;
-    cursor: pointer;
-    font-size: 0.75rem;
-    padding: 0.2rem 0.45rem;
-}
-
-.installHint {
-    font-size: 0.75rem;
-    color: #34495E;
-    text-align: right;
-    margin: 0.2rem 0 0;
 }
 
 .modeButton {
