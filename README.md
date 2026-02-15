@@ -4,42 +4,42 @@
 
 [https://mtgvim.github.io/pick-a-nimal/](https://mtgvim.github.io/pick-a-nimal/)
 
-```sh
-yarn install && yarn dev
-```
+브라우저에서 즐기는 동물 카드 매칭 게임입니다.  
+기록은 서버 없이 브라우저 `localStorage`에 저장됩니다.
 
 Node.js `20.19.0+`가 필요합니다 (`.nvmrc` 참고).
 
-## 스택
-- astro
-- vue.js 3
-- localStorage
-- @vite-pwa/astro (Workbox)
+## 기술 스택
+- Astro 5
+- Vue 3
+- TypeScript
+- `@vite-pwa/astro` (Workbox)
+- `localStorage` 기반 리더보드
 
-## 소개
+## 로컬 개발
+```sh
+yarn install
+yarn dev
+```
 
-카드 매칭 게임의 웹 버전입니다.
-현재는 온라인 계정 연동 없이, 브라우저 로컬 저장소(LocalStorage)에 기록을 저장합니다.
+## 검증
+```sh
+yarn astro check
+yarn build
+```
 
-## 현재 동작
-- 게임 클리어 시 소요 시간/뒤집기 횟수를 로컬에 저장
-- 리더보드는 현재 브라우저 기준 상위 기록 표시
-- 승리 시 `ta-da.mp3` 재생
-- PWA 설치 및 오프라인 실행 지원 (Workbox)
+## 배포
+- `main` 브랜치 푸시 시 GitHub Actions가 GitHub Pages로 자동 배포합니다.
+- 배포 워크플로우: `.github/workflows/deploy-github-pages.yml`
+- PR 빌드 체크: `.github/workflows/pr-check.yml`
 
-## TO-DO
-- [x] 기본 메커니즘 📆 25.01.07
-- [x] 재시작 기능 📆 25.01.07
-- [x] 애니메이션 📆 25.01.07
-- [x] 최고기록 저장 (시간, 뒤집기 갯수) 📆 25.01.07
-- [x] 오프라인 로컬 저장소 기반 기록 연동 📆 26.02.15
-- [x] 공유하기 📆 25.01.07
-  - [x] 클립보드 📆 25.01.07
-- [x] 로컬 리더보드 📆 26.02.15
-- [x] PWA (앱으로 설치) 지원 📆 26.02.15
-- [ ] 닉네임 편집 기능 (로컬)
-- [ ] flip 속도조절
-- [ ] 배속 정보 기록 반영
+## 주요 기능
+- 쉬움(4x4), 어려움(4x6) 모드
+- 동물 이모지 카드 프리셋 랜덤 선택
+- 라운드 기록 저장 (소요 시간/뒤집기 횟수)
+- 로컬 리더보드 페이지
+- 기록 공유 문구 복사
+- PWA 설치 및 오프라인 실행 지원
 
 ## 기여
 
