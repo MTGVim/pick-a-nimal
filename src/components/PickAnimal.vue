@@ -72,7 +72,7 @@ const remainedMatchCount = computed(() => {
 const startTime = ref(dayjs().valueOf());
 const flipCount = ref(0);
 const previewing = ref(false);
-const previewCountdown = ref(3);
+const previewCountdown = ref(5);
 let previewIntervalId: ReturnType<typeof setInterval> | null = null;
 const pendingTimeoutIds: ReturnType<typeof setTimeout>[] = [];
 const winAudio = typeof Audio === 'undefined'
@@ -141,7 +141,7 @@ const resetBoardByMode = (mode: GameMode) => {
     flipCount.value = 0;
     started.value = false;
     previewing.value = false;
-    previewCountdown.value = 3;
+    previewCountdown.value = 5;
     currentAnimals.value = pickRandomFaceSetByMode(mode);
     cards.value = _.shuffle(createCards(currentAnimals.value)).map((card) => ({
         ...card,
@@ -227,7 +227,7 @@ const onRestart = () => {
     started.value = true;
     flipCount.value = 0;
     previewing.value = true;
-    previewCountdown.value = 3;
+    previewCountdown.value = 5;
 
     if (previewIntervalId !== null) {
         clearInterval(previewIntervalId);
@@ -255,7 +255,7 @@ const onRestart = () => {
         }));
         startTime.value = dayjs().valueOf();
         previewing.value = false;
-    }, 3000);
+    }, 5000);
 };
 
 onBeforeUnmount(() => {
@@ -282,7 +282,7 @@ onBeforeUnmount(() => {
     <section class="boardWrap">
         <Transition name="toast-fade">
             <div v-if="previewing" class="previewToast">
-                {{ previewCountdown }}초 뒤 뒤집힙니다. 외우세요!
+                {{ previewCountdown }}초 뒤 뒤집힙니다.
             </div>
         </Transition>
         <TransitionGroup tag="section" class="board" :class="{ hard: isHardMode }" name="shuffle-card">
