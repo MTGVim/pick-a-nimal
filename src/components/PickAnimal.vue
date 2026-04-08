@@ -307,6 +307,7 @@ onBeforeUnmount(() => {
 
 <template>
     <section class="topBar">
+        <h1 class="title">Pick A-nimal</h1>
         <button
             class="soundToggle"
             :aria-label="isMuted ? '효과음 켜기' : '효과음 끄기'"
@@ -314,18 +315,10 @@ onBeforeUnmount(() => {
             type="button"
             @click="onToggleMute"
         >
-            <svg v-if="!isMuted" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M14 5.23v13.54a1 1 0 0 1-1.64.77L7.97 16H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.97l4.39-3.54A1 1 0 0 1 14 5.23Z" />
-                <path d="M16.5 9.5a1 1 0 0 1 1.41 0 3.54 3.54 0 0 1 0 5 1 1 0 1 1-1.41-1.42 1.54 1.54 0 0 0 0-2.16 1 1 0 0 1 0-1.42Z" />
-                <path d="M19.33 6.67a1 1 0 0 1 1.41 0 7.54 7.54 0 0 1 0 10.66 1 1 0 0 1-1.41-1.41 5.54 5.54 0 0 0 0-7.84 1 1 0 0 1 0-1.41Z" />
-            </svg>
-            <svg v-else viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M14 5.23v13.54a1 1 0 0 1-1.64.77L7.97 16H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.97l4.39-3.54A1 1 0 0 1 14 5.23Z" />
-                <path d="M17.71 12l2.65-2.65a1 1 0 0 0-1.42-1.41L16.3 10.59l-2.65-2.65a1 1 0 1 0-1.41 1.41L14.89 12l-2.65 2.65a1 1 0 0 0 1.41 1.41l2.65-2.65 2.64 2.65a1 1 0 0 0 1.42-1.41Z" />
-            </svg>
+            <span class="soundEmoji" aria-hidden="true">{{ isMuted ? '🔇' : '🔊' }}</span>
+            <span class="soundText">{{ isMuted ? 'OFF' : 'ON' }}</span>
         </button>
     </section>
-    <h1 class="title">Pick A-nimal</h1>
     <section class="buttons">
         <button class="modeButton" :class="{ selected: !isHardMode }" :disabled="previewing" @click="onModeClick('easy')">쉬움 4x4</button>
         <button class="modeButton" :class="{ selected: isHardMode }" :disabled="previewing" @click="onModeClick('hard')">어려움 4x6</button>
@@ -379,15 +372,16 @@ onBeforeUnmount(() => {
 
 .title {
     font-size: 2rem;
-    margin-bottom: 1rem;
-    text-align: center;
+    margin: 0;
+    text-align: left;
     color: #34495E;
 }
 
 .topBar {
+    align-items: center;
     display: flex;
-    justify-content: flex-end;
-    margin: 0 auto 0.4rem;
+    justify-content: space-between;
+    margin: 0 auto 1rem;
     max-width: 420px;
     padding: 0 24px;
 }
@@ -400,10 +394,12 @@ onBeforeUnmount(() => {
     color: #34495E;
     cursor: pointer;
     display: inline-flex;
-    height: 2.5rem;
+    gap: 0.45rem;
+    height: 3rem;
     justify-content: center;
+    min-width: 5.5rem;
+    padding: 0 0.95rem;
     transition: transform 0.15s ease, background-color 0.2s ease, border-color 0.2s ease;
-    width: 2.5rem;
 }
 
 .soundToggle:hover {
@@ -415,10 +411,15 @@ onBeforeUnmount(() => {
     transform: scale(0.94);
 }
 
-.soundToggle svg {
-    fill: currentColor;
-    height: 1.25rem;
-    width: 1.25rem;
+.soundEmoji {
+    font-size: 1.35rem;
+    line-height: 1;
+}
+
+.soundText {
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
 }
 
 .battery {
