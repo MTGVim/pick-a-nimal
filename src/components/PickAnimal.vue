@@ -76,6 +76,7 @@ const startTime = ref(dayjs().valueOf());
 const flipCount = ref(0);
 const previewing = ref(false);
 const previewCountdown = ref(5);
+const isMuted = ref(false);
 let previewIntervalId: ReturnType<typeof setInterval> | null = null;
 const pendingTimeoutIds: ReturnType<typeof setTimeout>[] = [];
 const winAudio = typeof Audio === 'undefined'
@@ -83,7 +84,7 @@ const winAudio = typeof Audio === 'undefined'
     : new Audio(`${import.meta.env.BASE_URL}sounds/ta-da.mp3`);
 
 const playAudio = (audio: Audio | null, allowOverlap = false) => {
-    if (!audio) {
+    if (!audio || isMuted.value) {
         return;
     }
 
@@ -96,6 +97,23 @@ const playAudio = (audio: Audio | null, allowOverlap = false) => {
 
 const playWinAudio = () => {
     playAudio(winAudio);
+};
+
+const stopAudio = (audio: Audio | null) => {
+    if (!audio) {
+        return;
+    }
+
+    audio.pause();
+    audio.currentTime = 0;
+};
+
+const onToggleMute = () => {
+    isMuted.value = !isMuted.value;
+
+    if (isMuted.value) {
+        stopAudio(winAudio);
+    }
 };
 
 const setManagedTimeout = (callback: () => void, ms: number) => {
@@ -288,6 +306,25 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
+    <section class="topBar">
+        <button
+            class="soundToggle"
+            :aria-label="isMuted ? '효과음 켜기' : '효과음 끄기'"
+            :title="isMuted ? '효과음 켜기' : '효과음 끄기'"
+            type="button"
+            @click="onToggleMute"
+        >
+            <svg v-if="!isMuted" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14 5.23v13.54a1 1 0 0 1-1.64.77L7.97 16H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.97l4.39-3.54A1 1 0 0 1 14 5.23Z" />
+                <path d="M16.5 9.5a1 1 0 0 1 1.41 0 3.54 3.54 0 0 1 0 5 1 1 0 1 1-1.41-1.42 1.54 1.54 0 0 0 0-2.16 1 1 0 0 1 0-1.42Z" />
+                <path d="M19.33 6.67a1 1 0 0 1 1.41 0 7.54 7.54 0 0 1 0 10.66 1 1 0 0 1-1.41-1.41 5.54 5.54 0 0 0 0-7.84 1 1 0 0 1 0-1.41Z" />
+            </svg>
+            <svg v-else viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14 5.23v13.54a1 1 0 0 1-1.64.77L7.97 16H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.97l4.39-3.54A1 1 0 0 1 14 5.23Z" />
+                <path d="M17.71 12l2.65-2.65a1 1 0 0 0-1.42-1.41L16.3 10.59l-2.65-2.65a1 1 0 1 0-1.41 1.41L14.89 12l-2.65 2.65a1 1 0 0 0 1.41 1.41l2.65-2.65 2.64 2.65a1 1 0 0 0 1.42-1.41Z" />
+            </svg>
+        </button>
+    </section>
     <h1 class="title">Pick A-nimal</h1>
     <section class="buttons">
         <button class="modeButton" :class="{ selected: !isHardMode }" :disabled="previewing" @click="onModeClick('easy')">쉬움 4x4</button>
@@ -345,6 +382,43 @@ onBeforeUnmount(() => {
     margin-bottom: 1rem;
     text-align: center;
     color: #34495E;
+}
+
+.topBar {
+    display: flex;
+    justify-content: flex-end;
+    margin: 0 auto 0.4rem;
+    max-width: 420px;
+    padding: 0 24px;
+}
+
+.soundToggle {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #cdd6de;
+    border-radius: 999px;
+    color: #34495E;
+    cursor: pointer;
+    display: inline-flex;
+    height: 2.5rem;
+    justify-content: center;
+    transition: transform 0.15s ease, background-color 0.2s ease, border-color 0.2s ease;
+    width: 2.5rem;
+}
+
+.soundToggle:hover {
+    background: #f4f9fc;
+    border-color: #9db4c4;
+}
+
+.soundToggle:active {
+    transform: scale(0.94);
+}
+
+.soundToggle svg {
+    fill: currentColor;
+    height: 1.25rem;
+    width: 1.25rem;
 }
 
 .battery {
