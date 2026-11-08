@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 This is an Astro + Vue 3 app deployed to GitHub Pages.
-Use Node.js `22.12.0+` (`.nvmrc`).
+Use Node.js `22.23.4+` (`.nvmrc`).
 
 - `src/pages/`: Astro route entry points (`index.astro`, `leaderboard.astro`).
 - `src/components/`: Vue SFC UI and game logic (PascalCase files like `PickAnimal.vue`).
