@@ -7,7 +7,7 @@
 브라우저에서 즐기는 동물 카드 매칭 게임입니다.  
 기록은 서버 없이 브라우저 `localStorage`에 저장됩니다.
 
-Node.js `20.19.0+`가 필요합니다 (`.nvmrc` 참고).
+Node.js `22.12.0+`가 필요합니다 (`.nvmrc` 참고).
 
 ## 기술 스택
 - Astro 5
@@ -66,3 +66,9 @@ GitHub 저장소: https://github.com/MTGVim/pick-a-nimal
 <!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+
+## 보안 업데이트
+
+Astro 보안 수정에 필요한 7.x와 Vue 3.5.42 이상을 사용하며 Node.js 22.12.0 이상이 필요합니다. 일반 버전 업데이트 PR은 생성하지 않고 보안 수정 PR만 받습니다. patch 보안 PR은 필수 빌드 검사 후 자동 병합하며 minor·major는 수동 검토합니다.
+
+🤖 본 보안 업데이트 안내는 AI가 작성했습니다.

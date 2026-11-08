@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 
 import vue from '@astrojs/vue';
-import PWA from '@vite-pwa/astro';
+import { AstroPWAIntegration as PWA } from '@vite-pwa/astro';
 
 const site = process.env.SITE_URL ?? 'https://mtgvim.github.io';
 const base = (() => {
